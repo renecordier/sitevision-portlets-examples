@@ -8,12 +8,9 @@
                         http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd">
 
     <portlet>
-        <description>Write here a short description about your portlet.</description>
-        <portlet-name>Goodbye Niteco</portlet-name>
-        <display-name>Goodbye Niteco Employees</display-name>
-
+        <portlet-name>NitecoEmployeePortlet</portlet-name>
+        <display-name>Niteco Employees Portlet</display-name>
         <portlet-class>se.niteco.EmployeePortlet</portlet-class>
-
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
@@ -25,7 +22,7 @@
         <portlet-info>
             <title>Niteco Employees</title>
             <short-title>Portlet Niteco Employees</short-title>
-            <keywords>put keywords here</keywords>
+            <keywords>niteco,employees</keywords>
         </portlet-info>
     </portlet>
 </portlet-app>
