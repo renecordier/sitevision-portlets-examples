@@ -8,6 +8,8 @@
   <name>Maven Portlet Archetype</name>
   <url>http://maven.apache.org</url>
   <build>
+  	  <sourceDirectory>${project.basedir}/src</sourceDirectory>
+	  <outputDirectory>${project.basedir}/target</outputDirectory>
       <plugins>
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
