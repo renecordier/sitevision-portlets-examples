@@ -10,7 +10,11 @@
     <portlet>
         <portlet-name>NitecoEmployeePortlet</portlet-name>
         <display-name>Niteco Employees Portlet</display-name>
-        <portlet-class>se.niteco.EmployeePortlet</portlet-class>
+        <portlet-class>se.niteco.client.EmployeePortlet</portlet-class>
+        <init-param>
+			<name>ViewPage</name>
+			<value>/velocity/listEmployee.vm</value>
+		</init-param>
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
@@ -21,8 +25,8 @@
 
         <portlet-info>
             <title>Niteco Employees</title>
-            <short-title>Portlet Niteco Employees</short-title>
-            <keywords>niteco,employees</keywords>
+            <keywords>interactive</keywords>
         </portlet-info>
     </portlet>
+    
 </portlet-app>

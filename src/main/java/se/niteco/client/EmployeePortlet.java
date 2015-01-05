@@ -1,14 +1,15 @@
-package se.niteco;
+package se.niteco.client;
 
 import javax.portlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class EmployeePortlet extends GenericPortlet{
+public class EmployeePortlet extends org.apache.portals.bridges.velocity.GenericVelocityPortlet{
 	
 	public void doView(RenderRequest request, RenderResponse response) 
 			throws PortletException, IOException{
-		PrintWriter write = response.getWriter();
+		super.doView(request, response);
+		/*PrintWriter write = response.getWriter();
 		
 
 		write.println("This is Niteco employees list using Portlet API 2.0");
@@ -25,6 +26,6 @@ public class EmployeePortlet extends GenericPortlet{
 		
 		response.setContentType("text/html");
 		write.println(tableHtml);
-		
+		*/
 	}
 }
