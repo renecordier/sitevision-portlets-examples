@@ -1,17 +1,28 @@
-<h3>This is Niteco employees list using Portlet API 2.0</h3>
-
-<table>
-  <tr>
-	<td> Khoi </td>
-	<td> Leader </td>
-  </tr>
-  <tr>
-    <td> XonMX </td>
-	<td> Developer </td>
-  </tr>
-</table>
+<h3>This is Niteco employees list using Portlet API and Velocity</h3>
 
 <form action="$renderResponse.createActionURL()" method="POST">
-	<button type="submit" name="action" value="add">Add</button>
-	<button type="submit" name="action" value="edit">Edit</button>
+	#if ($employees)
+	<table>
+		<tr>
+			<td>Id</td>
+			<td>Name</td>
+			<td>Email</td>
+			<td>Team</td>
+			<td>Role</td>
+			<td>Salary</td>
+		</tr>
+		#foreach ($employee in $employees)
+		<tr>
+			<td>$employee.id</td>
+			<td>$employee.name</td>
+			<td>$employee.email</td>
+			<td>$employee.team</td>
+			<td>$employee.role</td>
+			<td>$employee.salary</td>
+		</tr>
+		#end
+	#end
+
+	<button type="submit" name="action" value="add">Add employee</button>
+	##<button type="submit" name="action" value="edit">Edit</button>
 </form>

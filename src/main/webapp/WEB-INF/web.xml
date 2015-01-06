@@ -6,6 +6,10 @@
     <display-name>Niteco Employees Portlet</display-name>
     <description>Niteco Employees Portlet</description>
     
+    <listener>
+		<listener-class>se.niteco.controller.EmployeeListContextListener</listener-class>
+	</listener>
+    
     <servlet>
 		<servlet-name>velocity</servlet-name>
 		<servlet-class>org.apache.portals.bridges.velocity.BridgesVelocityViewServlet</servlet-class>

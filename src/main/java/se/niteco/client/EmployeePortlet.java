@@ -4,6 +4,9 @@ import javax.portlet.*;
 
 import org.apache.portals.bridges.velocity.GenericVelocityPortlet;
 
+import se.niteco.controller.EmployeeService;
+import se.niteco.controller.EmployeeServiceImpl;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -11,6 +14,16 @@ import java.io.PrintWriter;
  * Portlet class of Niteco's employees
  */
 public class EmployeePortlet extends GenericVelocityPortlet {
+	
+	private static EmployeeService employeeService;
+	
+	public void init() {
+		employeeService = new EmployeeServiceImpl(this.getPortletContext());
+	}
+
+	public static EmployeeService getBookService() {
+		return employeeService;
+	}
 	
 	/**
 	 * The rendering method of the portlet.
@@ -21,7 +34,9 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 	public void doView(RenderRequest request, RenderResponse response) throws PortletException, IOException{
 		if(request.getParameter("status") == null || request.getParameter("status").equals("default") ){
 			//default view
-			super.doView(request, response);
+			request.setAttribute("employees", employeeService.getEmployees());
+			PortletRequestDispatcher dispatcher = this.getPortletContext().getRequestDispatcher("/velocity/listEmployee.vm");
+			dispatcher.include(request, response);	
 		}
 		else {
 			if(request.getParameter("status").equals("add")){
