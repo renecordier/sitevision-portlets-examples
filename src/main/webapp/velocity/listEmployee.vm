@@ -10,20 +10,8 @@
 	<td> Developer </td>
   </tr>
 </table>
-#*
-###createRenderStateURL($addEmployee "add_employee")
-#set( $renderAddEmployeeURL = $renderResponse.createRenderURL() )
-$renderAddEmployeeURL.setParameter("action", "addEmployee")
-<a href="$renderAddEmployeeURL">Add employee</a>
-###createRenderStateURL($editEmployee "edit_employee")
-<a href="$renderResponse.createActionURL()">Edit employee</a>
-*#
+
 <form action="$renderResponse.createActionURL()" method="POST">
 	<button type="submit" name="action" value="add">Add</button>
 	<button type="submit" name="action" value="edit">Edit</button>
 </form>
-#*
-<form action="$renderResponse.createActionURL()" method="POST">
-	<input type="submit" value="Add" />
-</form>
-*#

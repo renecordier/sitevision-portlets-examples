@@ -7,15 +7,20 @@ import org.apache.portals.bridges.velocity.GenericVelocityPortlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/*
- * 
+/**
+ * Portlet class of Niteco's employees
  */
 public class EmployeePortlet extends GenericVelocityPortlet {
 	
-	public void doView(RenderRequest request, RenderResponse response) 
-			throws PortletException, IOException{
-		if(request.getParameter("status") == null || request.getParameter("status").equals("view") ){
-			// In case it's null, return into default view that's already defined in the portlet.xml viewPage
+	/**
+	 * The rendering method of the portlet.
+	 * 
+	 * @param request 	the rendering request
+	 * @param response	the rendering response
+	 */
+	public void doView(RenderRequest request, RenderResponse response) throws PortletException, IOException{
+		if(request.getParameter("status") == null || request.getParameter("status").equals("default") ){
+			//default view
 			super.doView(request, response);
 		}
 		else {
@@ -32,15 +37,20 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 		}
 	}
 	
-	
+	/**
+	 * The action method of the portlet.
+	 * 
+	 * @param request	the action request
+	 * @param response	the response request 
+	 */
 	public void processAction(ActionRequest request, ActionResponse response) throws PortletException, IOException{
 		String action = request.getParameter("action");
-		if (action.equals("add"))
+		if (action.equals("add")) //if we add an employee
 			response.setRenderParameter("status", "add");
-		else if (action.equals("edit"))
+		else if (action.equals("edit")) //if we edit an employee
 			response.setRenderParameter("status", "edit");
-		else
-			response.setRenderParameter("status", "view");
+		else //default view
+			response.setRenderParameter("status", "default");
 	}
 	
 }
