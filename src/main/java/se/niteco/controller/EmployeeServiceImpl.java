@@ -40,13 +40,20 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	public Employee getEmployee(int id) {
-		//todo
-		return null;
+		EmployeeDataObject employeeList = (EmployeeDataObject) context.getAttribute("employeeList");
+		Employee matchingEmployee = null;
+		for(Employee employee : employeeList.getEmployees()) {
+			if(employee.getId() == id) {
+				matchingEmployee = employee;
+				break;
+			}
+		}
+		return matchingEmployee;
 	}
 
 	public void removeEmployee(int id) {
-		//todo
-
+		EmployeeDataObject employeeList = (EmployeeDataObject) context.getAttribute("employeeList");
+		employeeList.getEmployees().remove(getEmployee(id));
 	}
 
 	public List<Employee> searchEmployees(String name) {

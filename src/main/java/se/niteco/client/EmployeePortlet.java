@@ -70,25 +70,35 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 	 */
 	public void processAction(ActionRequest request, ActionResponse response) throws PortletException, IOException{
 		String action = request.getParameter("action");
-		if (action.equals("addPage")) //if we want to add an employee
-			response.setRenderParameter("status", "add");
-		else if (action.equals("editPage")) //if we want to edit an employee
-			response.setRenderParameter("status", "edit");
-		else if (action.equals("addEmployeeAction")) {
-			errorMap = new HashMap<String, String>();
-			valuesMap = new HashMap<String, String>();
-			boolean success = addEmployeeAction(request, response);
-			if (success) {
+		if (action == null) { //for delete and edit actions i put an other param, so i can use the value as the id
+			String delete = request.getParameter("delete");
+			if (delete != null) { //delete action
+				int employeeId = Integer.parseInt(delete);
+				employeeService.removeEmployee(employeeId);
 				response.setRenderParameter("status", "default");
-			} else {
-				response.setRenderParameter("status", "add");
 			}
-		} else if (action.equals("cancelAction")) {
-			errorMap = new HashMap<String, String>();
-			valuesMap = new HashMap<String, String>();
-			response.setRenderParameter("status", "default");
-		} else //default view
-			response.setRenderParameter("status", "default");
+		} else { //if action
+			if (action.equals("addPage")) //if we want to add an employee
+				response.setRenderParameter("status", "add");
+			else if (action.equals("editPage")) //if we want to edit an employee
+				response.setRenderParameter("status", "edit");
+			else if (action.equals("addEmployeeAction")) { //if we register an employee
+				errorMap = new HashMap<String, String>();
+				valuesMap = new HashMap<String, String>();
+				boolean success = addEmployeeAction(request, response);
+				if (success) {
+					response.setRenderParameter("status", "default");
+				} else {
+					response.setRenderParameter("status", "add");
+				}
+			} else if (action.equals("cancelAction")) { //cancel
+				errorMap = new HashMap<String, String>();
+				valuesMap = new HashMap<String, String>();
+				response.setRenderParameter("status", "default");
+			} else {//default view
+				response.setRenderParameter("status", "default");
+			}
+		}
 	}
 	
 	/**

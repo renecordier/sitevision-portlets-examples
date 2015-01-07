@@ -10,6 +10,7 @@
 			<td>Team</td>
 			<td>Role</td>
 			<td>Salary</td>
+			<td>Actions</td>
 		</tr>
 		#foreach ($employee in $employees)
 		<tr>
@@ -19,6 +20,11 @@
 			<td>$employee.team</td>
 			<td>$employee.role</td>
 			<td>$employee.salary</td>
+			#*#set ($renderDeleteEmployeeURL = $renderResponse.createRenderURL())
+			$renderDeleteEmployeeURL.setParameter("action", "deleteEmployee")
+			##$renderDeleteEmployeeURL.setParameter("employeeId", $employee.id)
+			*#
+			<td><button type="submit" name="delete" value="$employee.id">Delete</button></td>
 		</tr>
 		#end
 	#end
