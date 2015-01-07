@@ -23,27 +23,34 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	public void addEmployee(Employee employee) {
-		
-
+		EmployeeDataObject employeeList = (EmployeeDataObject) context.getAttribute("employeeList");
+		employeeList.getEmployees().add(employee);
 	}
 
 	public boolean isIdUnique(int id) {
-		
-		return false;
+		EmployeeDataObject employeeList = (EmployeeDataObject) context.getAttribute("employeeList");
+		boolean isUnique = true;
+		for(Employee employee : employeeList.getEmployees()) {
+			if(employee.getId() == id) {
+				isUnique = false;
+				break;
+			}
+		}
+		return isUnique;
 	}
 
 	public Employee getEmployee(int id) {
-		
+		//todo
 		return null;
 	}
 
 	public void removeEmployee(int id) {
-		
+		//todo
 
 	}
 
 	public List<Employee> searchEmployees(String name) {
-		
+		//todo
 		return null;
 	}
 

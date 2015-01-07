@@ -6,6 +6,9 @@ import java.util.List;
 
 import se.niteco.model.Employee;
 
+/**
+ * Data object employee. A kind of static homemade database.
+ */
 public class EmployeeDataObject {
 	private List<Employee> employees = Collections.synchronizedList(new ArrayList<Employee>());
 	

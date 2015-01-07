@@ -23,6 +23,6 @@
 		#end
 	#end
 
-	<button type="submit" name="action" value="add">Add employee</button>
-	##<button type="submit" name="action" value="edit">Edit</button>
+	<button type="submit" name="action" value="addPage">Add employee</button>
+	##<button type="submit" name="action" value="editPage">Edit</button>
 </form>
