@@ -22,14 +22,13 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 	private Map<String, String> errorMap;//error messages when adding or editing an employee
 	private Map<String, String> valuesMap;//keeping values to show in add or edit employee
 	
+	/**
+	 * At the initialization of the portlet we start the service to manage employees 
+	 */
 	public void init() {
 		employeeService = new EmployeeServiceImpl(this.getPortletContext());
 		errorMap = new HashMap<String, String>(); 
 		valuesMap = new HashMap<String, String>();  
-	}
-
-	public static EmployeeService getBookService() {
-		return employeeService;
 	}
 	
 	/**
@@ -37,6 +36,8 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 	 * 
 	 * @param request 	the rendering request
 	 * @param response	the rendering response
+	 * @throws PortletException
+	 * @throws IOException
 	 */
 	public void doView(RenderRequest request, RenderResponse response) throws PortletException, IOException{
 		String veloPage = "";
@@ -64,6 +65,8 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 	 * 
 	 * @param request	the action request
 	 * @param response	the response request 
+	 * @throws PortletException
+	 * @throws IOException
 	 */
 	public void processAction(ActionRequest request, ActionResponse response) throws PortletException, IOException{
 		String action = request.getParameter("action");
@@ -88,6 +91,16 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 			response.setRenderParameter("status", "default");
 	}
 	
+	/**
+	 * This method checks if all the data of an employee are valid and then allow to register 
+	 * the employee in the data object.
+	 * 
+	 * @param request
+	 * @param response
+	 * @return true if the registration of the employee is successfull, false otherwise
+	 * @throws PortletException
+	 * @throws IOException
+	 */
 	private boolean addEmployeeAction(ActionRequest request, ActionResponse response) throws PortletException, IOException{
 		String id = request.getParameter("employeeId");
 		String name = request.getParameter("employeeName");
