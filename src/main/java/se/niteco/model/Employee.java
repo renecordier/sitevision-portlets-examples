@@ -9,9 +9,9 @@ public class Employee {
 	private String email;
 	private String team;
 	private String role;
-	private String salary;
+	private int salary;
 	
-	public Employee (int id, String name, String email, String team, String role, String salary) {
+	public Employee (int id, String name, String email, String team, String role, int salary) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
@@ -59,11 +59,11 @@ public class Employee {
 		this.role = role;
 	}
 	
-	public String getSalary() {
+	public int getSalary() {
 		return salary;
 	}
 	
-	public void setSalary(String salary) {
+	public void setSalary(int salary) {
 		this.salary = salary;
 	}
 }

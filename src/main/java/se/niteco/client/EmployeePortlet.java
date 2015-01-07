@@ -10,7 +10,6 @@ import se.niteco.controller.EmployeeServiceImpl;
 import se.niteco.model.Employee;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,19 +97,19 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 		String salary = request.getParameter("employeeSalary");
 		
 		if (name == null || name.trim().equalsIgnoreCase("")) {
-			errorMap.put("name", "Please enter employee's name");
+			errorMap.put("name", "Please enter a valid name");
 		}
 		if (email == null || email.trim().equalsIgnoreCase("")) {
-			errorMap.put("email", "Please enter employee's email");
+			errorMap.put("email", "Please enter a valid email");
 		}
 		if (team == null || team.trim().equalsIgnoreCase("")) {
-			errorMap.put("team", "Please enter employee's team");
+			errorMap.put("team", "Please enter a valid team");
 		}
 		if (role == null || role.trim().equalsIgnoreCase("")) {
-			errorMap.put("role", "Please enter employee's role");
+			errorMap.put("role", "Please enter a valid role");
 		}
-		if (salary == null || salary.trim().equalsIgnoreCase("")) {
-			errorMap.put("salary", "Please enter employee's salary");
+		if (salary == null || salary.trim().equalsIgnoreCase("") || !StringUtils.isNumeric(salary)) {
+			errorMap.put("salary", "Please enter a valid salary");
 		}
 		if (id == null || id.trim().equalsIgnoreCase("") || !StringUtils.isNumeric(id)) {
 			errorMap.put("id", "Please enter a valid id number");
@@ -121,7 +120,7 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 		}
 		
 		if (errorMap.isEmpty()) { 
-			employeeService.addEmployee(new Employee(Integer.parseInt(id), name, email, team, role, salary));
+			employeeService.addEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary)));
 			return true;
 		} else {
 			request.setAttribute("errors", errorMap);
