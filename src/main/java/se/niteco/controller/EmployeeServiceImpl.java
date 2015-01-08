@@ -61,4 +61,20 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return null;
 	}
 
+	public void updateEmployee(Employee employee) {
+		EmployeeDataObject employeeList = (EmployeeDataObject) context.getAttribute("employeeList");
+		int index = getEmployeeIndex(employee.getId());
+		employeeList.getEmployees().set(index, employee);
+	}
+
+	public int getEmployeeIndex(int id) {
+		EmployeeDataObject employeeList = (EmployeeDataObject) context.getAttribute("employeeList");
+		int index;
+		for (index = 0; index < employeeList.getEmployees().size(); index++) {
+			if(employeeList.getEmployees().get(index).getId() == id)
+				break;
+		}
+		return index;
+	}
+
 }

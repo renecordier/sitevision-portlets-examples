@@ -1,4 +1,8 @@
+#if ($addPage)
 <h3>Add employee</h3>
+#else
+<h3>Edit employee</h3>
+#end
 
 <form action="$renderResponse.createActionURL()" method="POST">
 <table>
@@ -33,7 +37,11 @@
 		<td>$!errors.get("salary").toString()</td>
 	</tr>
 	<tr>
+		#if ($addPage)
 		<td><button type="submit" name="action" value="addEmployeeAction">Register</button></td>
+		#else
+		<td><button type="submit" name="action" value="editEmployeeAction">Edit</button></td>
+		#end
 		<td><button type="submit" name="action" value="cancelAction">Cancel</button></td>
 	</tr>
 </table>

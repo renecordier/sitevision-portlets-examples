@@ -20,11 +20,10 @@
 			<td>$employee.team</td>
 			<td>$employee.role</td>
 			<td>$employee.salary</td>
-			#*#set ($renderDeleteEmployeeURL = $renderResponse.createRenderURL())
-			$renderDeleteEmployeeURL.setParameter("action", "deleteEmployee")
-			##$renderDeleteEmployeeURL.setParameter("employeeId", $employee.id)
-			*#
-			<td><button type="submit" name="delete" value="$employee.id">Delete</button></td>
+			<td>
+				<button type="submit" name="edit" value="$employee.id">Edit</button>
+				<button type="submit" name="delete" value="$employee.id">Delete</button>
+			</td>
 		</tr>
 		#end
 	#end
