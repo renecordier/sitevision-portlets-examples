@@ -1,34 +1,225 @@
-package se.niteco.client;
+package se.niteco.controller;
 
 import javax.portlet.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.portals.bridges.velocity.GenericVelocityPortlet;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
+import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
-import se.niteco.controller.EmployeeService;
-import se.niteco.controller.EmployeeServiceImpl;
 import se.niteco.model.Employee;
+import se.niteco.service.EmployeeService;
 
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Portlet class of Niteco's employees
  */
-public class EmployeePortlet extends GenericVelocityPortlet {
+@Controller
+@RequestMapping(value="VIEW")
+public class EmployeePortlet {
 	
-	private static EmployeeService employeeService;
+	@Autowired
+	@Qualifier("employeeService")
+	private EmployeeService service;
+	
 	private Map<String, String> errorMap;//error messages when adding or editing an employee
 	private Map<String, String> valuesMap;//keeping values to show in add or edit employee
 	
-	/**
-	 * At the initialization of the portlet we start the service to manage employees 
-	 */
-	public void init() {
-		employeeService = new EmployeeServiceImpl(this.getPortletContext());
-		errorMap = new HashMap<String, String>(); 
-		valuesMap = new HashMap<String, String>();  
+	@RenderMapping
+	public String showEmployee(Model model, RenderRequest request, RenderResponse response){
+	
+		//Set add url
+		PortletURL showAddUrl = response.createRenderURL();
+		showAddUrl.setParameter("action", "showAdd");
+		model.addAttribute("showAddUrl", showAddUrl);
+
+		//Set edit url
+		PortletURL editUrl = response.createRenderURL();
+		editUrl.setParameter("action", "showEdit");
+		model.addAttribute("editUrl", editUrl);
+
+		//Set remove url
+		PortletURL removeUrl = response.createActionURL();
+		removeUrl.setParameter("action", "deleteEmployee");
+		model.addAttribute("removeUrl", removeUrl);
+		
+		//Get list of employee
+		List<Employee> lst = service.getEmployees();
+		model.addAttribute("employees", lst);
+		
+		return "listEmployee";
+	}
+	
+	@RenderMapping(params = "action=showAdd")
+	public String showAdd(Model model, RenderRequest request, RenderResponse response){
+		
+		//Set url to model
+		PortletURL actionUrl = response.createActionURL();
+		actionUrl.setParameter("action", "insertEmployee");
+		
+		//Set cancel url
+		PortletURL cancelUrl = response.createActionURL();
+		cancelUrl.setParameter("action", "cancel");
+		
+		model.addAttribute("actionUrl", actionUrl);
+		model.addAttribute("cancelUrl", cancelUrl);
+		
+		model.addAttribute("addPage", true);
+		model.addAttribute("errors", errorMap);
+		model.addAttribute("employee", valuesMap);
+		
+		return "addEditEmployee";
+	}
+	
+	@ActionMapping(params = "action=insertEmployee")
+	public void doAdd(ActionRequest request, ActionResponse response){
+		String id = request.getParameter("employeeId");
+		String name = request.getParameter("employeeName");
+		String email = request.getParameter("employeeEmail");
+		String team = request.getParameter("employeeTeam");
+		String role = request.getParameter("employeeRole");
+		String salary = request.getParameter("employeeSalary");
+		
+		errorMap = new HashMap<String, String>();
+		if (name == null || name.trim().equalsIgnoreCase("")) {
+			errorMap.put("name", "Please enter a valid name");
+		}
+		if (email == null || email.trim().equalsIgnoreCase("")) {
+			errorMap.put("email", "Please enter a valid email");
+		}
+		if (team == null || team.trim().equalsIgnoreCase("")) {
+			errorMap.put("team", "Please enter a valid team");
+		}
+		if (role == null || role.trim().equalsIgnoreCase("")) {
+			errorMap.put("role", "Please enter a valid role");
+		}
+		if (salary == null || salary.trim().equalsIgnoreCase("") || !StringUtils.isNumeric(salary)) {
+			errorMap.put("salary", "Please enter a valid salary");
+		}
+		if (id == null || id.trim().equalsIgnoreCase("") || !StringUtils.isNumeric(id)) {
+			errorMap.put("id", "Please enter a valid id number");
+		} else {
+			if (!service.isIdUnique(Integer.parseInt(id))) {
+				errorMap.put("id", "Id number not unique ! Please enter a valid id number");
+			}
+		}
+		
+		if (errorMap.isEmpty()) { 
+			service.addEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary)));
+		} else {
+			// contains property name to property value map, for re-rendering
+			// the form with values that were entered by the user for each form field
+			valuesMap = new HashMap<String, String>();
+			valuesMap.put("name", name);
+			valuesMap.put("email", email);
+			valuesMap.put("team", team);
+			valuesMap.put("role", role);
+			valuesMap.put("salary", salary);
+			valuesMap.put("id", id);
+			response.setRenderParameter("action", "showAdd");
+		}	
+	}
+	
+	@RenderMapping(params = "action=showEdit")
+	public String showEdit(Model model, RenderRequest request, RenderResponse response){
+
+		//Set url to model
+		PortletURL actionUrl = response.createActionURL();
+		actionUrl.setParameter("action", "updateEmployee");
+		
+		//Set cancel url
+		PortletURL cancelUrl = response.createActionURL();
+		cancelUrl.setParameter("action", "cancel");
+				
+		model.addAttribute("actionUrl", actionUrl);
+		model.addAttribute("cancelUrl", cancelUrl);
+		
+		//Get selected employee
+		String employeeId = request.getParameter("employeeId");
+		if (employeeId != null) {
+			int id = Integer.parseInt(employeeId);
+			Employee employee = service.getEmployee(id);
+			valuesMap = new HashMap<String, String>();
+			valuesMap.put("name", employee.getName());
+			valuesMap.put("email", employee.getEmail());
+			valuesMap.put("team", employee.getTeam());
+			valuesMap.put("role", employee.getRole());
+			valuesMap.put("salary", employee.getSalary()+"");
+			valuesMap.put("id", employee.getId()+"");
+		}
+		
+		model.addAttribute("addPage", false);
+		model.addAttribute("errors", errorMap);
+		model.addAttribute("employee", valuesMap);
+		
+		return "addEditEmployee";
+	}
+	
+	@ActionMapping(params = "action=updateEmployee")
+	public void doEdit(ActionRequest request, ActionResponse response){
+		String id = request.getParameter("employeeId");
+		String name = request.getParameter("employeeName");
+		String email = request.getParameter("employeeEmail");
+		String team = request.getParameter("employeeTeam");
+		String role = request.getParameter("employeeRole");
+		String salary = request.getParameter("employeeSalary");
+		
+		errorMap = new HashMap<String, String>();
+		
+		if (name == null || name.trim().equalsIgnoreCase("")) {
+			errorMap.put("name", "Please enter a valid name");
+		}
+		if (email == null || email.trim().equalsIgnoreCase("")) {
+			errorMap.put("email", "Please enter a valid email");
+		}
+		if (team == null || team.trim().equalsIgnoreCase("")) {
+			errorMap.put("team", "Please enter a valid team");
+		}
+		if (role == null || role.trim().equalsIgnoreCase("")) {
+			errorMap.put("role", "Please enter a valid role");
+		}
+		if (salary == null || salary.trim().equalsIgnoreCase("") || !StringUtils.isNumeric(salary)) {
+			errorMap.put("salary", "Please enter a valid salary");
+		}
+		if (id == null || id.trim().equalsIgnoreCase("") || !StringUtils.isNumeric(id)) {
+			errorMap.put("id", "Please enter a valid id number");
+		}
+		
+		if (errorMap.isEmpty()) { 
+			service.updateEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary)));
+		} else {
+			// contains property name to property value map, for re-rendering
+			// the form with values that were entered by the user for each form field
+			valuesMap = new HashMap<String, String>();
+			valuesMap.put("name", name);
+			valuesMap.put("email", email);
+			valuesMap.put("team", team);
+			valuesMap.put("role", role);
+			valuesMap.put("salary", salary);
+			valuesMap.put("id", id);
+			response.setRenderParameter("action", "showEdit");
+		}		
+	}
+	
+	@ActionMapping(params = "action=deleteEmployee")
+	public void doRemove(ActionRequest request){
+		String id = request.getParameter("employeeId");
+		if (id != null) { //delete action
+			service.removeEmployee(Integer.parseInt(id));
+		}
+	}
+	
+	@ActionMapping(params = "action=cancel")
+	public void doCancel(ActionRequest request){
+		errorMap = new HashMap<String, String>();
+		valuesMap = new HashMap<String, String>();
 	}
 	
 	/**
@@ -38,7 +229,7 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 	 * @param response	the rendering response
 	 * @throws PortletException
 	 * @throws IOException
-	 */
+	 *//*
 	public void doView(RenderRequest request, RenderResponse response) throws PortletException, IOException{
 		String veloPage = "";
 		boolean addPage = false;
@@ -86,7 +277,7 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 	 * @param response	the response request 
 	 * @throws PortletException
 	 * @throws IOException
-	 */
+	 *//*
 	public void processAction(ActionRequest request, ActionResponse response) throws PortletException, IOException{
 		String action = request.getParameter("action");
 		if (action == null) { //for delete and edit actions i put an other param, so i can use the value as the id
@@ -142,7 +333,7 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 	 * @return true if the registration of the employee is successfull, false otherwise
 	 * @throws PortletException
 	 * @throws IOException
-	 */
+	 *//*
 	private boolean editEmployeeAction(ActionRequest request, ActionResponse response) throws PortletException, IOException {
 		String id = request.getParameter("employeeId");
 		String name = request.getParameter("employeeName");
@@ -197,7 +388,7 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 	 * @return true if the registration of the employee is successfull, false otherwise
 	 * @throws PortletException
 	 * @throws IOException
-	 */
+	 *//*
 	private boolean addEmployeeAction(ActionRequest request, ActionResponse response) throws PortletException, IOException{
 		String id = request.getParameter("employeeId");
 		String name = request.getParameter("employeeName");
@@ -245,6 +436,6 @@ public class EmployeePortlet extends GenericVelocityPortlet {
 			valuesMap.put("id", id);
 			return false;
 		}		
-	}
+	}*/
 	
 }

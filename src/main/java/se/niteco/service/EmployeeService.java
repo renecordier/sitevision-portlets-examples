@@ -1,4 +1,4 @@
-package se.niteco.controller;
+package se.niteco.service;
 
 import java.util.List;
 

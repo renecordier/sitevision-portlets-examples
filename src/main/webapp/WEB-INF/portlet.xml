@@ -10,23 +10,19 @@
     <portlet>
         <portlet-name>NitecoEmployeePortlet</portlet-name>
         <display-name>Niteco Employees Portlet</display-name>
-        <portlet-class>se.niteco.client.EmployeePortlet</portlet-class>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
-			<name>ViewPage</name>
-			<value>/velocity/listEmployee.vm</value>
+			<name>contextConfigLocation</name>
+            <value>/WEB-INF/niteco-portlet.xml</value>
 		</init-param>
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
         </supports>
 
-        <supported-locale>en</supported-locale>
-        <resource-bundle>content.Language-niteco</resource-bundle>
-
         <portlet-info>
             <title>Niteco Employees</title>
             <keywords>interactive</keywords>
         </portlet-info>
     </portlet>
-    
 </portlet-app>

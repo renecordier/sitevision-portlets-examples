@@ -4,11 +4,15 @@
 <h3>Edit employee</h3>
 #end
 
-<form action="$renderResponse.createActionURL()" method="POST">
+<form action="$actionUrl" method="POST">
 <table>
 	<tr>
 		<td>Id :</td>
-		<td><input name="employeeId" value="$!employee.get("id").toString()" /></td>
+		<td><input name="employeeId" value="$!employee.get("id").toString()" 
+		#if(!$addPage)
+        	readonly
+        #end
+		/></td>
 		<td>$!errors.get("id").toString()</td>
 	</tr>
 	<tr>
@@ -38,10 +42,10 @@
 	</tr>
 	<tr>
 		#if ($addPage)
-		<td><button type="submit" name="action" value="addEmployeeAction">Register</button></td>
+		<td><input type="submit" value="Register" /></td>
 		#else
-		<td><button type="submit" name="action" value="editEmployeeAction">Edit</button></td>
+		<td><input type="submit" value="Update" /></td>
 		#end
-		<td><button type="submit" name="action" value="cancelAction">Cancel</button></td>
+		<td><a href="$cancelUrl" >Cancel</a></td>
 	</tr>
 </table>

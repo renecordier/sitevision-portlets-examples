@@ -1,0 +1,34 @@
+<h3>This is Niteco employees list using Portlet API, Spring and Velocity</h3>
+
+<form action="$showAddUrl" method="post">
+	#if ($employees)
+	<table>
+		<tr>
+			<td>Id</td>
+			<td>Name</td>
+			<td>Email</td>
+			<td>Team</td>
+			<td>Role</td>
+			<td>Salary</td>
+			<td>Actions</td>
+		</tr>
+		#foreach ($employee in $employees)
+		<tr>
+			<td>$employee.id</td>
+			<td>$employee.name</td>
+			<td>$employee.email</td>
+			<td>$employee.team</td>
+			<td>$employee.role</td>
+			<td>$employee.salary</td>
+			<td>
+				#set( $editEmployee = $editUrl + "&employeeId=" + $employee.id )
+                #set( $removeEmployee = $removeUrl + "&employeeId=" + $employee.id) 
+                <a href="$editEmployee" >Edit</a>
+                <a href="$removeEmployee" onclick="return confirm('Are you sure to delete this employee ?')" >Delete</a>
+			</td>
+		</tr>
+		#end
+	#end
+
+	<input type="submit" value="Add employee" />
+</form>

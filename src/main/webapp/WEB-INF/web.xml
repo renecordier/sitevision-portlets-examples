@@ -6,17 +6,23 @@
     <display-name>Niteco Employees Portlet</display-name>
     <description>Niteco Employees Portlet</description>
     
-    <listener>
-		<listener-class>se.niteco.controller.EmployeeListContextListener</listener-class>
+    <context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/*-portlet.xml</param-value>
+	</context-param>
+	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
     
     <servlet>
-		<servlet-name>velocity</servlet-name>
-		<servlet-class>org.apache.portals.bridges.velocity.BridgesVelocityViewServlet</servlet-class>
+		<servlet-name>view-servlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet-mapping>
-		<servlet-name>velocity</servlet-name>
-		<url-pattern>*.vm</url-pattern>
+		<servlet-name>view-servlet</servlet-name>
+		<url-pattern>/WEB-INF/servlet/view</url-pattern>
 	</servlet-mapping>
 </web-app>
