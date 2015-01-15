@@ -88,7 +88,7 @@ public class EmployeePortlet {
     }
 	
 	@RenderMapping
-	public String showEmployee(Model model, RenderRequest request, RenderResponse response){
+	public String showEmployee(Model model, RenderRequest request, RenderResponse response, PortletPreferences pref){
 	
 		//Set add url
 		PortletURL showAddUrl = response.createRenderURL();
@@ -116,10 +116,11 @@ public class EmployeePortlet {
 			loadEmployeesList(request); 
 			init = false;
 		}
-		
       	List<Employee> lst = service.getEmployees();
       	model.addAttribute("employees", lst);
-		
+      	
+      	String mode = pref.getValue("mode", "View");
+		model.addAttribute("mode", mode);
 		return "listEmployee";
 	}
 	

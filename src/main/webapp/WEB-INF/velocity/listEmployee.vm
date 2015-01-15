@@ -10,7 +10,9 @@
 			<td>Team</td>
 			<td>Role</td>
 			<td>Salary</td>
+			#if ($mode.equals("Edit"))
 			<td>Actions</td>
+			#end
 		</tr>
 		#foreach ($employee in $employees)
 		<tr>
@@ -20,12 +22,14 @@
 			<td>$employee.team</td>
 			<td>$employee.role</td>
 			<td>$employee.salary</td>
+			#if ($mode.equals("Edit"))
 			<td>
 				#set( $editEmployee = $editUrl + "&employeeId=" + $employee.id )
                 #set( $removeEmployee = $removeUrl + "&employeeId=" + $employee.id) 
                 <a href="$editEmployee" >Edit</a>
                 <a href="$removeEmployee" onclick="return confirm('Are you sure to delete this employee ?')" >Delete</a>
 			</td>
+			#end
 		</tr>
 		#end
 	#end

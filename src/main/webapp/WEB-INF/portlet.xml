@@ -18,11 +18,23 @@
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>CONFIG</portlet-mode>
         </supports>
-
+		
         <portlet-info>
             <title>Niteco Employees</title>
             <keywords>interactive</keywords>
         </portlet-info>
+        
+        <portlet-preferences>
+			<preference>
+				<name>text</name>
+				<value></value>
+			</preference>
+		</portlet-preferences>
     </portlet>
+    
+    <custom-portlet-mode>
+		<portlet-mode>config</portlet-mode>
+	</custom-portlet-mode>
 </portlet-app>
