@@ -33,6 +33,7 @@
 		</tr>
 		#end
 	#end
-
+	#if ($mode.equals("Edit"))
 	<input type="submit" value="Add employee" />
+	#end
 </form>
