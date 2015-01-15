@@ -1,4 +1,4 @@
-<h3>This is Niteco employees list using Portlet API, Spring and Velocity</h3>
+<h3>This is Niteco employees list using Portlet API, Spring and Velocity and API</h3>
 
 <form action="$showAddUrl" method="post">
 	#if ($employees)

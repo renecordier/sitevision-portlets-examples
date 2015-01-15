@@ -57,4 +57,16 @@
         <property name="suffix" value=".vm"/>
         <property name="contentType" value="text/html;charset=UTF-8"/>
     </bean>
+    
+    <!-- Default ExceptionHandler -->
+	<bean id="defaultExceptionHandler" class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver">
+    <property name="order" value="10"/>
+		<property name="defaultErrorView" value="error"/>
+		<property name="exceptionMappings">
+			<props>
+				<prop key="javax.portlet.PortletSecurityException">unauthorized</prop>
+				<prop key="javax.portlet.UnavailableException">unavailable</prop>
+			</props>
+		</property>  
+	</bean>
 </beans>

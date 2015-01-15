@@ -19,12 +19,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	private List<Employee> employeeList = Collections.synchronizedList(new ArrayList<Employee>());
 	
 	public EmployeeServiceImpl() {
-		employeeList.add(new Employee(1, "Khoi", "khoi@niteco.se", "RxEye", "Team leader", 1000));
+		/*employeeList.add(new Employee(1, "Khoi", "khoi@niteco.se", "RxEye", "Team leader", 1000));
 		employeeList.add(new Employee(2, "Rene", "rene@niteco.se", "SiteVision", "Java dev", 500));
 		employeeList.add(new Employee(3, "Xon", "xon@niteco.se", "SiteVision", "Java dev", 500));
-		employeeList.add(new Employee(4, "Calvin", "calvin@niteco.se", "PMs", "PMO", 3000));
+		employeeList.add(new Employee(4, "Calvin", "calvin@niteco.se", "PMs", "PMO", 3000));*/
 	}
 
+	
 	public List<Employee> getEmployees() {
 		return this.employeeList;
 	}
@@ -76,6 +77,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 				break;
 		}
 		return index;
+	}
+
+	public void setEmployees(List<Employee> employees) {
+		this.employeeList = employees;
 	}
 
 }

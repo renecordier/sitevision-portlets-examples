@@ -9,6 +9,7 @@ import se.niteco.model.Employee;
  */
 public interface EmployeeService {
 	List<Employee> getEmployees();
+	void setEmployees(List<Employee> employees);
 	void addEmployee(Employee employee);
 	boolean isIdUnique (int id);
 	Employee getEmployee(int id);
@@ -16,4 +17,5 @@ public interface EmployeeService {
 	List<Employee> searchEmployees(String name);
 	void updateEmployee(Employee employee);
 	int getEmployeeIndex(int id);
+	
 }
