@@ -11,7 +11,7 @@
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util-3.0.xsd
         ">
-	<context:component-scan base-package="se.niteco" />
+	<!-- <context:component-scan base-package="se.niteco" /> -->
 
     <!-- VelocityConfig -->
     <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">

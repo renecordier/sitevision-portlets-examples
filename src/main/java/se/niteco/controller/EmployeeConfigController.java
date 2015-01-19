@@ -13,6 +13,7 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.portlet.WindowState;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,22 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 @Controller
 @RequestMapping(value="CONFIG")
 public class EmployeeConfigController {
+	private VelocityEngine velocityEngine; 
+    
+    /**
+     * @param velocityEngine the velocityEngine to set
+     */
+    public void setVelocityEngine(VelocityEngine velocityEngine) {
+        this.velocityEngine = velocityEngine;
+    }
+
+    /**
+     * @return the velocityEngine
+     */
+    public VelocityEngine getVelocityEngine() {
+        return velocityEngine;
+    }
+	
 	@RenderMapping
 	public String doConfig(RenderRequest request, RenderResponse response, Model model, PortletPreferences pref) 
 			throws PortletException, IOException{

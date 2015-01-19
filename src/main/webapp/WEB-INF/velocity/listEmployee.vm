@@ -1,3 +1,4 @@
+<div class="employees">
 <h3>This is Niteco employees list using Portlet API, Spring and Velocity and API</h3>
 
 <form action="$showAddUrl" method="post">
@@ -32,8 +33,10 @@
 			#end
 		</tr>
 		#end
+	</table>
 	#end
 	#if ($mode.equals("Edit"))
 	<input type="submit" value="Add employee" />
 	#end
 </form>
+</div>

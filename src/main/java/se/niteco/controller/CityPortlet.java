@@ -1,9 +1,18 @@
 package se.niteco.controller;
 
-import javax.jcr.Node;
-import javax.portlet.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import javax.jcr.Node;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletURL;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,61 +21,36 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-import org.springframework.web.portlet.context.PortletContextAware;
 
-import se.niteco.model.Employee;
-import se.niteco.service.EmployeeService;
-import se.niteco.service.EmployeeServiceImpl;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import se.niteco.model.City;
+import se.niteco.service.CityService;
+import se.niteco.service.CityServiceImpl;
 import senselogic.sitevision.api.Utils;
 import senselogic.sitevision.api.context.PortletContextUtil;
 import senselogic.sitevision.api.metadata.MetadataUtil;
 import senselogic.sitevision.api.property.PropertyUtil;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-/**
- * Portlet class of Niteco's employees
- */
 @Controller
 @RequestMapping(value="VIEW")
-public class EmployeePortlet implements PortletContextAware{
-	
+public class CityPortlet {
 	@Autowired
-	@Qualifier("employeeService")
-	private EmployeeService service;
+	@Qualifier("cityService")
+	private CityService cityServ;
 	
-	private Map<String, String> errorMap;//error messages when adding or editing an employee
-	private Map<String, String> valuesMap;//keeping values to show in add or edit employee
-	
-	protected final static String META_EMPLOYEES_LIST = "employeeList";
+	protected final static String META_CITIES_LIST = "cityList";
 	
 	protected final Gson gson = new Gson();
     
-    private final Type employeesType =  new TypeToken<ArrayList<Employee>>() {}.getType();
+    private final Type citiesType =  new TypeToken<ArrayList<City>>() {}.getType();
     
     private boolean init = true;
     
-    private PortletContext portletContext;
+    private VelocityEngine velocityEngine; 
     
-    private String metadataName;
-    private VelocityEngine velocityEngine;
-    
-    public String getMetadataName() {
-		return this.metadataName;
-	}
-	
-	public void setMetadataName(String metadataName) {
-		this.metadataName = metadataName;
-	}
-	
-	/**
+    /**
      * @param velocityEngine the velocityEngine to set
      */
     public void setVelocityEngine(VelocityEngine velocityEngine) {
@@ -79,10 +63,10 @@ public class EmployeePortlet implements PortletContextAware{
     public VelocityEngine getVelocityEngine() {
         return velocityEngine;
     }
-	
-	protected void loadEmployeesList(PortletRequest request) { 
-		String employeesJSON = null;
-		service = new EmployeeServiceImpl();
+    
+    protected void loadCityList(PortletRequest request) { 
+		String cityJSON = null;
+		cityServ = new CityServiceImpl();
 		
 		Utils utils = (Utils)request.getAttribute("sitevision.utils");
         PortletContextUtil pcUtil = utils.getPortletContextUtil();
@@ -90,30 +74,29 @@ public class EmployeePortlet implements PortletContextAware{
         
         Node currentPage = pcUtil.getCurrentPage();
        
-        employeesJSON = propertyUtil.getString(currentPage, META_EMPLOYEES_LIST);
-        System.out.println(employeesJSON);
+        cityJSON = propertyUtil.getString(currentPage, META_CITIES_LIST);
+        System.out.println(cityJSON);
         
-        if (employeesJSON != null && employeesJSON.trim().length() > 0) {
+        if (cityJSON != null && cityJSON.trim().length() > 0) {
             try {
-            	service.setEmployees((List<Employee>) gson.fromJson(employeesJSON, employeesType));
+            	cityServ.setCities((List<City>) gson.fromJson(cityJSON, citiesType));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } 
 	}
 	
-	protected void saveEmployeesList(PortletRequest request) throws Exception {
+	protected void saveCityList(PortletRequest request) throws Exception {
         Utils utils = (Utils)request.getAttribute("sitevision.utils");
         PortletContextUtil pcUtil = utils.getPortletContextUtil();
         MetadataUtil metaUtil = utils.getMetadataUtil();
         Node currentPage = pcUtil.getCurrentPage();
         
-        metaUtil.setMetadataPropertyValue(currentPage, META_EMPLOYEES_LIST, gson.toJson(service.getEmployees()));
+        metaUtil.setMetadataPropertyValue(currentPage, META_CITIES_LIST, gson.toJson(cityServ.getCities()));
     }
 	
 	@RenderMapping
 	public String showEmployee(Model model, RenderRequest request, RenderResponse response, PortletPreferences pref){
-	
 		//Set add url
 		PortletURL showAddUrl = response.createRenderURL();
 		showAddUrl.setParameter("action", "showAdd");
@@ -126,31 +109,23 @@ public class EmployeePortlet implements PortletContextAware{
 
 		//Set remove url
 		PortletURL removeUrl = response.createActionURL();
-		removeUrl.setParameter("action", "deleteEmployee");
+		removeUrl.setParameter("action", "deleteCity");
 		model.addAttribute("removeUrl", removeUrl);
 
 		//Get list of employee
-        /*if (!model.containsAttribute(C_EMPLOYEES_LIST)) {
-            loadEmployeesList(request);            
-            model.addAttribute(C_EMPLOYEES_LIST, service);
-        } else {
-        	service = (EmployeeService)model.asMap().get(C_EMPLOYEES_LIST);
-        }*/
 		if (init) {
-			loadEmployeesList(request); 
+			loadCityList(request); 
 			init = false;
 		}
-      	List<Employee> lst = service.getEmployees();
-      	model.addAttribute("employees", lst);
+      	List<City> lst = cityServ.getCities();
+      	model.addAttribute("cities", lst);
       	
-      	String mode = pref.getValue("mode", "View");
-		model.addAttribute("mode", mode);
-		return "listEmployee";
+		return "listCities";
 	}
 	
 	@RenderMapping(params = "action=showAdd")
 	public String showAdd(Model model, RenderRequest request, RenderResponse response){
-		
+		/*
 		//Set url to model
 		PortletURL actionUrl = response.createActionURL();
 		actionUrl.setParameter("action", "insertEmployee");
@@ -166,12 +141,13 @@ public class EmployeePortlet implements PortletContextAware{
 		model.addAttribute("errors", errorMap);
 		model.addAttribute("employee", valuesMap);
 		
-		return "addEditEmployee";
+		return "addEditEmployee";*/
+		return "listCities";
 	}
 	
-	@ActionMapping(params = "action=insertEmployee")
+	@ActionMapping(params = "action=insertCity")
 	public void doAdd(ActionRequest request, ActionResponse response){
-		String id = request.getParameter("employeeId");
+		/*String id = request.getParameter("employeeId");
 		String name = request.getParameter("employeeName");
 		String email = request.getParameter("employeeEmail");
 		String team = request.getParameter("employeeTeam");
@@ -221,12 +197,12 @@ public class EmployeePortlet implements PortletContextAware{
 			valuesMap.put("salary", salary);
 			valuesMap.put("id", id);
 			response.setRenderParameter("action", "showAdd");
-		}	
+		}*/	
 	}
 	
 	@RenderMapping(params = "action=showEdit")
 	public String showEdit(Model model, RenderRequest request, RenderResponse response){
-
+/*
 		//Set url to model
 		PortletURL actionUrl = response.createActionURL();
 		actionUrl.setParameter("action", "updateEmployee");
@@ -256,12 +232,13 @@ public class EmployeePortlet implements PortletContextAware{
 		model.addAttribute("errors", errorMap);
 		model.addAttribute("employee", valuesMap);
 		
-		return "addEditEmployee";
+		return "addEditEmployee";*/
+		return "listCities";
 	}
 	
-	@ActionMapping(params = "action=updateEmployee")
+	@ActionMapping(params = "action=updateCity")
 	public void doEdit(ActionRequest request, ActionResponse response){
-		String id = request.getParameter("employeeId");
+		/*String id = request.getParameter("employeeId");
 		String name = request.getParameter("employeeName");
 		String email = request.getParameter("employeeEmail");
 		String team = request.getParameter("employeeTeam");
@@ -308,12 +285,12 @@ public class EmployeePortlet implements PortletContextAware{
 			valuesMap.put("salary", salary);
 			valuesMap.put("id", id);
 			response.setRenderParameter("action", "showEdit");
-		}		
+		}*/		
 	}
 	
-	@ActionMapping(params = "action=deleteEmployee")
+	@ActionMapping(params = "action=deleteCity")
 	public void doRemove(ActionRequest request){
-		String id = request.getParameter("employeeId");
+		/*String id = request.getParameter("employeeId");
 		if (id != null) { //delete action
 			service.removeEmployee(Integer.parseInt(id));
 			try {
@@ -322,22 +299,12 @@ public class EmployeePortlet implements PortletContextAware{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		}*/
 	}
 	
 	@ActionMapping(params = "action=cancel")
 	public void doCancel(ActionRequest request){
-		errorMap = new HashMap<String, String>();
-		valuesMap = new HashMap<String, String>();
+		/*errorMap = new HashMap<String, String>();
+		valuesMap = new HashMap<String, String>();*/
 	}
-
-	protected PortletContext getPortletContext() {
-        return portletContext;
-    }
-    
-    public void setPortletContext(PortletContext portletContext) {
-        this.portletContext = portletContext;
-        
-    }
-	
 }

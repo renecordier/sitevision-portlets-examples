@@ -13,7 +13,7 @@
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
 			<name>contextConfigLocation</name>
-            <value>/WEB-INF/niteco-portlet.xml</value>
+            <value>/WEB-INF/NitecoEmployeePortlet-portlet.xml</value>
 		</init-param>
         <supports>
             <mime-type>text/html</mime-type>
@@ -23,6 +23,32 @@
 		
         <portlet-info>
             <title>Niteco Employees</title>
+            <keywords>interactive</keywords>
+        </portlet-info>
+        
+        <portlet-preferences>
+			<preference>
+				<name>text</name>
+				<value></value>
+			</preference>
+		</portlet-preferences>
+    </portlet>
+    
+    <portlet>
+        <portlet-name>NitecoCitiesPortlet</portlet-name>
+        <display-name>Niteco Cities</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+			<name>contextConfigLocation</name>
+            <value>/WEB-INF/NitecoCitiesPortlet-portlet.xml</value>
+		</init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+		
+        <portlet-info>
+            <title>Niteco Cities</title>
             <keywords>interactive</keywords>
         </portlet-info>
         

@@ -1,0 +1,28 @@
+<div class="cities">
+<h3>Niteco cities</h3>
+
+<form action="$showAddUrl" method="post">
+	#if ($cities)
+	<table>
+		<tr>
+			<td>Id</td>
+			<td>City name</td>			
+			<td>Actions</td>
+		</tr>
+		#foreach ($city in $cities)
+		<tr>
+			<td>$city.cityId</td>
+			<td>$city.cityName</td>
+			<td>
+				#set( $editCity = $editUrl + "&cityId=" + $city.cityId )
+                #set( $removeCity = $removeUrl + "&cityId=" + $city.cityId) 
+                <a href="$editCity" >Edit</a>
+                <a href="$removeCity" onclick="return confirm('Are you sure to delete this city ?')" >Delete</a>
+			</td>
+		</tr>
+		#end
+	</table>
+	#end
+	<input type="submit" value="Add city" />
+</form>
+</div>
