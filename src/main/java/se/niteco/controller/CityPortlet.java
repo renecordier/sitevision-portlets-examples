@@ -120,33 +120,71 @@ public class CityPortlet {
       	List<City> lst = cityServ.getCities();
       	model.addAttribute("cities", lst);
       	
+      	model.addAttribute("mode", "view");
+      	
 		return "listCities";
 	}
 	
 	@RenderMapping(params = "action=showAdd")
 	public String showAdd(Model model, RenderRequest request, RenderResponse response){
-		/*
-		//Set url to model
-		PortletURL actionUrl = response.createActionURL();
-		actionUrl.setParameter("action", "insertEmployee");
+		/*//Set add url
+		PortletURL showAddUrl = response.createRenderURL();
+		showAddUrl.setParameter("action", "showAdd");
+		model.addAttribute("showAddUrl", showAddUrl);
+
+		//Set edit url
+		PortletURL editUrl = response.createRenderURL();
+		editUrl.setParameter("action", "showEdit");
+		model.addAttribute("editUrl", editUrl);
+
+		//Set remove url
+		PortletURL removeUrl = response.createActionURL();
+		removeUrl.setParameter("action", "deleteCity");
+		model.addAttribute("removeUrl", removeUrl);
+		*/
+		
+		//Set insert url
+		PortletURL insertCityUrl = response.createActionURL();
+		insertCityUrl.setParameter("action", "insertCity");
+		model.addAttribute("insertCityUrl", insertCityUrl);
 		
 		//Set cancel url
 		PortletURL cancelUrl = response.createActionURL();
 		cancelUrl.setParameter("action", "cancel");
-		
-		model.addAttribute("actionUrl", actionUrl);
 		model.addAttribute("cancelUrl", cancelUrl);
 		
-		model.addAttribute("addPage", true);
-		model.addAttribute("errors", errorMap);
-		model.addAttribute("employee", valuesMap);
-		
-		return "addEditEmployee";*/
+		//Get list of employee
+		if (init) {
+			loadCityList(request); 
+			init = false;
+		}
+      	List<City> lst = cityServ.getCities();
+      	model.addAttribute("cities", lst);
+      	
+      	model.addAttribute("mode", "add");
+      	
+      	int idNew = cityServ.getNewCityId();
+      	model.addAttribute("idNew", idNew);
+      	
 		return "listCities";
 	}
 	
 	@ActionMapping(params = "action=insertCity")
 	public void doAdd(ActionRequest request, ActionResponse response){
+		String id = request.getParameter("addId");
+		String name = request.getParameter("addName");
+		
+		cityServ.addCity(new City(Integer.parseInt(id), name));
+		
+		System.out.println(gson.toJson(cityServ.getCities()));
+		
+		try {
+			saveCityList(request);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		/*String id = request.getParameter("employeeId");
 		String name = request.getParameter("employeeName");
 		String email = request.getParameter("employeeEmail");

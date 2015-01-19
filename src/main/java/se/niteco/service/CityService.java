@@ -12,4 +12,5 @@ public interface CityService {
 	void removeCity(int id);
 	void updateCity(City city);
 	int getCityIndex(int id);
+	int getNewCityId();
 }

@@ -1,7 +1,11 @@
 <div class="cities">
 <h3>Niteco cities</h3>
 
+#if ($mode.equals("add"))
+<form action="$insertCityUrl" method="post">
+#else
 <form action="$showAddUrl" method="post">
+#end
 	#if ($cities)
 	<table>
 		<tr>
@@ -14,15 +18,29 @@
 			<td>$city.cityId</td>
 			<td>$city.cityName</td>
 			<td>
+				#if ($mode.equals("view"))
 				#set( $editCity = $editUrl + "&cityId=" + $city.cityId )
                 #set( $removeCity = $removeUrl + "&cityId=" + $city.cityId) 
                 <a href="$editCity" >Edit</a>
                 <a href="$removeCity" onclick="return confirm('Are you sure to delete this city ?')" >Delete</a>
+                #end
 			</td>
 		</tr>
 		#end
+		#if ($mode.equals("add"))
+		<tr>
+			<td><input name="addId" value="$idNew" readonly /></td>
+			<td><input name="addName" /></td>
+			<td>
+				<input type="submit" value="Add" />
+				<a href="$cancelUrl" >Cancel</a>
+			</td>
+		</tr>	
+		#end
 	</table>
 	#end
+	#if ($mode.equals("view"))
 	<input type="submit" value="Add city" />
+	#end
 </form>
 </div>

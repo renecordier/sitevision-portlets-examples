@@ -58,4 +58,15 @@ public class CityServiceImpl implements CityService {
 		return index;
 	}
 
+	public int getNewCityId() {
+		int newId = 0;
+		for(City city : cityList) {
+			if(city.getCityId() > newId) {
+				newId = city.getCityId();
+			}
+		}
+
+		return (newId+1);
+	}
+
 }
