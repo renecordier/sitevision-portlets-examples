@@ -1,6 +1,13 @@
 package se.niteco.controller;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 import javax.portlet.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
+import org.springframework.web.portlet.context.PortletContextAware;
 
 import se.niteco.model.Employee;
 import se.niteco.service.EmployeeService;
@@ -18,6 +26,10 @@ import se.niteco.service.EmployeeServiceImpl;
 import senselogic.sitevision.api.Utils;
 import senselogic.sitevision.api.context.PortletContextUtil;
 import senselogic.sitevision.api.metadata.MetadataUtil;
+import senselogic.sitevision.api.metadata.builder.LinkValueBuilder;
+import senselogic.sitevision.api.metadata.builder.RelatedValueBuilder;
+import senselogic.sitevision.api.metadata.value.LinkValue;
+import senselogic.sitevision.api.metadata.value.RelatedValue;
 import senselogic.sitevision.api.property.PropertyUtil;
 
 import java.lang.reflect.Type;
@@ -35,7 +47,7 @@ import com.google.gson.reflect.TypeToken;
  */
 @Controller
 @RequestMapping(value="VIEW")
-public class EmployeePortlet {
+public class EmployeePortlet implements PortletContextAware{
 	
 	@Autowired
 	@Qualifier("employeeService")
@@ -44,13 +56,25 @@ public class EmployeePortlet {
 	private Map<String, String> errorMap;//error messages when adding or editing an employee
 	private Map<String, String> valuesMap;//keeping values to show in add or edit employee
 	
-	protected final static String C_EMPLOYEES_LIST = "employeesList";
+	protected final static String META_EMPLOYEES_LIST = "employeeList";
 	
 	protected final Gson gson = new Gson();
     
     private final Type employeesType =  new TypeToken<ArrayList<Employee>>() {}.getType();
     
     private boolean init = true;
+    
+    private PortletContext portletContext;
+    
+    private String metadataName;
+    
+    public String getMetadataName() {
+		return this.metadataName;
+	}
+	
+	public void setMetadataName(String metadataName) {
+		this.metadataName = metadataName;
+	}
 	
 	protected void loadEmployeesList(PortletRequest request) { 
 		String employeesJSON = null;
@@ -61,8 +85,8 @@ public class EmployeePortlet {
         PropertyUtil propertyUtil = utils.getPropertyUtil();
         
         Node currentPage = pcUtil.getCurrentPage();
-        
-        employeesJSON = propertyUtil.getString(currentPage, C_EMPLOYEES_LIST);
+       
+        employeesJSON = propertyUtil.getString(currentPage, META_EMPLOYEES_LIST);
         
         if (employeesJSON != null && employeesJSON.trim().length() > 0) {
             try {
@@ -79,12 +103,9 @@ public class EmployeePortlet {
         Utils utils = (Utils)request.getAttribute("sitevision.utils");
         PortletContextUtil pcUtil = utils.getPortletContextUtil();
         MetadataUtil metaUtil = utils.getMetadataUtil();
-        Node currentPage = null;
-        currentPage = pcUtil.getCurrentPage();
-        String plop = null;
-        plop = gson.toJson(service.getEmployees());
+        Node currentPage = pcUtil.getCurrentPage();
         
-        metaUtil.setMetadataPropertyValue(currentPage, C_EMPLOYEES_LIST, plop);
+        metaUtil.setMetadataPropertyValue(currentPage, META_EMPLOYEES_LIST, gson.toJson(service.getEmployees()));
     }
 	
 	@RenderMapping
@@ -114,7 +135,7 @@ public class EmployeePortlet {
         }*/
 		if (init) {
 			loadEmployeesList(request); 
-			init = false;
+			//init = false;
 		}
       	List<Employee> lst = service.getEmployees();
       	model.addAttribute("employees", lst);
@@ -306,5 +327,14 @@ public class EmployeePortlet {
 		errorMap = new HashMap<String, String>();
 		valuesMap = new HashMap<String, String>();
 	}
+
+	protected PortletContext getPortletContext() {
+        return portletContext;
+    }
+    
+    public void setPortletContext(PortletContext portletContext) {
+        this.portletContext = portletContext;
+        
+    }
 	
 }
