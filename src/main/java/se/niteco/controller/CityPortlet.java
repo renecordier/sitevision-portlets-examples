@@ -127,22 +127,6 @@ public class CityPortlet {
 	
 	@RenderMapping(params = "action=showAdd")
 	public String showAdd(Model model, RenderRequest request, RenderResponse response){
-		/*//Set add url
-		PortletURL showAddUrl = response.createRenderURL();
-		showAddUrl.setParameter("action", "showAdd");
-		model.addAttribute("showAddUrl", showAddUrl);
-
-		//Set edit url
-		PortletURL editUrl = response.createRenderURL();
-		editUrl.setParameter("action", "showEdit");
-		model.addAttribute("editUrl", editUrl);
-
-		//Set remove url
-		PortletURL removeUrl = response.createActionURL();
-		removeUrl.setParameter("action", "deleteCity");
-		model.addAttribute("removeUrl", removeUrl);
-		*/
-		
 		//Set insert url
 		PortletURL insertCityUrl = response.createActionURL();
 		insertCityUrl.setParameter("action", "insertCity");
@@ -184,165 +168,69 @@ public class CityPortlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		/*String id = request.getParameter("employeeId");
-		String name = request.getParameter("employeeName");
-		String email = request.getParameter("employeeEmail");
-		String team = request.getParameter("employeeTeam");
-		String role = request.getParameter("employeeRole");
-		String salary = request.getParameter("employeeSalary");
-		
-		errorMap = new HashMap<String, String>();
-		if (name == null || name.trim().equalsIgnoreCase("")) {
-			errorMap.put("name", "Please enter a valid name");
-		}
-		if (email == null || email.trim().equalsIgnoreCase("")) {
-			errorMap.put("email", "Please enter a valid email");
-		}
-		if (team == null || team.trim().equalsIgnoreCase("")) {
-			errorMap.put("team", "Please enter a valid team");
-		}
-		if (role == null || role.trim().equalsIgnoreCase("")) {
-			errorMap.put("role", "Please enter a valid role");
-		}
-		if (salary == null || salary.trim().equalsIgnoreCase("") || !StringUtils.isNumeric(salary)) {
-			errorMap.put("salary", "Please enter a valid salary");
-		}
-		if (id == null || id.trim().equalsIgnoreCase("") || !StringUtils.isNumeric(id)) {
-			errorMap.put("id", "Please enter a valid id number");
-		} else {
-			if (!service.isIdUnique(Integer.parseInt(id))) {
-				errorMap.put("id", "Id number not unique ! Please enter a valid id number");
-			}
-		}
-		
-		if (errorMap.isEmpty()) {
-			service.addEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary)));
-			try {
-				saveEmployeesList(request);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			// contains property name to property value map, for re-rendering
-			// the form with values that were entered by the user for each form field
-			valuesMap = new HashMap<String, String>();
-			valuesMap.put("name", name);
-			valuesMap.put("email", email);
-			valuesMap.put("team", team);
-			valuesMap.put("role", role);
-			valuesMap.put("salary", salary);
-			valuesMap.put("id", id);
-			response.setRenderParameter("action", "showAdd");
-		}*/	
 	}
 	
 	@RenderMapping(params = "action=showEdit")
 	public String showEdit(Model model, RenderRequest request, RenderResponse response){
-/*
+
 		//Set url to model
-		PortletURL actionUrl = response.createActionURL();
-		actionUrl.setParameter("action", "updateEmployee");
+		PortletURL updateCityUrl = response.createActionURL();
+		updateCityUrl.setParameter("action", "updateCity");
 		
 		//Set cancel url
 		PortletURL cancelUrl = response.createActionURL();
 		cancelUrl.setParameter("action", "cancel");
 				
-		model.addAttribute("actionUrl", actionUrl);
+		model.addAttribute("updateCityUrl", updateCityUrl);
 		model.addAttribute("cancelUrl", cancelUrl);
 		
-		//Get selected employee
-		String employeeId = request.getParameter("employeeId");
-		if (employeeId != null) {
-			int id = Integer.parseInt(employeeId);
-			Employee employee = service.getEmployee(id);
-			valuesMap = new HashMap<String, String>();
-			valuesMap.put("name", employee.getName());
-			valuesMap.put("email", employee.getEmail());
-			valuesMap.put("team", employee.getTeam());
-			valuesMap.put("role", employee.getRole());
-			valuesMap.put("salary", employee.getSalary()+"");
-			valuesMap.put("id", employee.getId()+"");
+		//Get list of employee
+		if (init) {
+			loadCityList(request); 
+			init = false;
 		}
+      	List<City> lst = cityServ.getCities();
+      	model.addAttribute("cities", lst);
 		
-		model.addAttribute("addPage", false);
-		model.addAttribute("errors", errorMap);
-		model.addAttribute("employee", valuesMap);
+		//Get selected city
+		String cityId = request.getParameter("cityId");
+		model.addAttribute("idEdit", Integer.parseInt(cityId));
 		
-		return "addEditEmployee";*/
+		model.addAttribute("mode", "edit");
+
 		return "listCities";
 	}
 	
 	@ActionMapping(params = "action=updateCity")
 	public void doEdit(ActionRequest request, ActionResponse response){
-		/*String id = request.getParameter("employeeId");
-		String name = request.getParameter("employeeName");
-		String email = request.getParameter("employeeEmail");
-		String team = request.getParameter("employeeTeam");
-		String role = request.getParameter("employeeRole");
-		String salary = request.getParameter("employeeSalary");
+		String id = request.getParameter("idUpdate");
+		String name = request.getParameter("nameUpdate");
 		
-		errorMap = new HashMap<String, String>();
-		
-		if (name == null || name.trim().equalsIgnoreCase("")) {
-			errorMap.put("name", "Please enter a valid name");
+		cityServ.updateCity(new City(Integer.parseInt(id), name));
+		try {
+			saveCityList(request);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		if (email == null || email.trim().equalsIgnoreCase("")) {
-			errorMap.put("email", "Please enter a valid email");
-		}
-		if (team == null || team.trim().equalsIgnoreCase("")) {
-			errorMap.put("team", "Please enter a valid team");
-		}
-		if (role == null || role.trim().equalsIgnoreCase("")) {
-			errorMap.put("role", "Please enter a valid role");
-		}
-		if (salary == null || salary.trim().equalsIgnoreCase("") || !StringUtils.isNumeric(salary)) {
-			errorMap.put("salary", "Please enter a valid salary");
-		}
-		if (id == null || id.trim().equalsIgnoreCase("") || !StringUtils.isNumeric(id)) {
-			errorMap.put("id", "Please enter a valid id number");
-		}
-		
-		if (errorMap.isEmpty()) {
-			service.updateEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary)));
-			try {
-				saveEmployeesList(request);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			// contains property name to property value map, for re-rendering
-			// the form with values that were entered by the user for each form field
-			valuesMap = new HashMap<String, String>();
-			valuesMap.put("name", name);
-			valuesMap.put("email", email);
-			valuesMap.put("team", team);
-			valuesMap.put("role", role);
-			valuesMap.put("salary", salary);
-			valuesMap.put("id", id);
-			response.setRenderParameter("action", "showEdit");
-		}*/		
 	}
 	
 	@ActionMapping(params = "action=deleteCity")
 	public void doRemove(ActionRequest request){
-		/*String id = request.getParameter("employeeId");
-		if (id != null) { //delete action
-			service.removeEmployee(Integer.parseInt(id));
+		String cityId = request.getParameter("cityId");
+		if (cityId != null) { //delete action
+			cityServ.removeCity(Integer.parseInt(cityId));
 			try {
-				saveEmployeesList(request);
+				saveCityList(request);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}*/
+		}
 	}
 	
 	@ActionMapping(params = "action=cancel")
 	public void doCancel(ActionRequest request){
-		/*errorMap = new HashMap<String, String>();
-		valuesMap = new HashMap<String, String>();*/
+		
 	}
 }

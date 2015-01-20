@@ -3,6 +3,8 @@
 
 #if ($mode.equals("add"))
 <form action="$insertCityUrl" method="post">
+#elseif ($mode.equals("edit"))
+<form action="$updateCityUrl" method="post">
 #else
 <form action="$showAddUrl" method="post">
 #end
@@ -15,6 +17,14 @@
 		</tr>
 		#foreach ($city in $cities)
 		<tr>
+			#if ($mode.equals("edit") && $idEdit == $city.cityId)
+			<td><input name="idUpdate" value="$city.cityId" readonly /></td>
+			<td><input name="nameUpdate" value="$city.cityName" /></td>
+			<td>
+				<input type="submit" value="Update" />
+				<a href="$cancelUrl" >Cancel</a>
+			</td>
+			#else
 			<td>$city.cityId</td>
 			<td>$city.cityName</td>
 			<td>
@@ -25,6 +35,7 @@
                 <a href="$removeCity" onclick="return confirm('Are you sure to delete this city ?')" >Delete</a>
                 #end
 			</td>
+			#end
 		</tr>
 		#end
 		#if ($mode.equals("add"))
