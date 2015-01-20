@@ -11,6 +11,7 @@
 			<td>Team</td>
 			<td>Role</td>
 			<td>Salary</td>
+			<td>City</td>
 			#if ($mode.equals("Edit"))
 			<td>Actions</td>
 			#end
@@ -23,6 +24,7 @@
 			<td>$employee.team</td>
 			<td>$employee.role</td>
 			<td>$employee.salary</td>
+			<td>$!employee.city.cityName</td>
 			#if ($mode.equals("Edit"))
 			<td>
 				#set( $editEmployee = $editUrl + "&employeeId=" + $employee.id )

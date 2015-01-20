@@ -41,6 +41,17 @@
 		<td>$!errors.get("salary").toString()</td>
 	</tr>
 	<tr>
+		<td>City :</td>
+		<td>
+			<select name="citySelect">
+				#foreach ($city in $cities)
+				<option value="$city.cityId">$city.cityName</option>
+				#end
+			</select>
+		</td>
+		<td></td>
+	</tr>
+	<tr>
 		#if ($addPage)
 		<td><input type="submit" value="Register" /></td>
 		#else

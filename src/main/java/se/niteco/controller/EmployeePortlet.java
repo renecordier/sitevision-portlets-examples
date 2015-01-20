@@ -14,7 +14,10 @@ import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.context.PortletContextAware;
 
+import se.niteco.model.City;
 import se.niteco.model.Employee;
+import se.niteco.service.CityService;
+import se.niteco.service.CityServiceImpl;
 import se.niteco.service.EmployeeService;
 import se.niteco.service.EmployeeServiceImpl;
 import senselogic.sitevision.api.Utils;
@@ -42,6 +45,10 @@ public class EmployeePortlet implements PortletContextAware{
 	@Qualifier("employeeService")
 	private EmployeeService service;
 	
+	@Autowired
+	@Qualifier("cityService")
+	private CityService cityServ;
+	
 	private Map<String, String> errorMap;//error messages when adding or editing an employee
 	private Map<String, String> valuesMap;//keeping values to show in add or edit employee
 	
@@ -50,6 +57,7 @@ public class EmployeePortlet implements PortletContextAware{
 	protected final Gson gson = new Gson();
     
     private final Type employeesType =  new TypeToken<ArrayList<Employee>>() {}.getType();
+    private final Type citiesType =  new TypeToken<ArrayList<City>>() {}.getType();
     
     private boolean init = true;
     
@@ -102,6 +110,26 @@ public class EmployeePortlet implements PortletContextAware{
         } 
 	}
 	
+	protected void loadCitiesList(PortletRequest request) {
+		String cityJSON = null;
+		cityServ = new CityServiceImpl();
+		
+		Utils utils = (Utils)request.getAttribute("sitevision.utils");
+        PortletContextUtil pcUtil = utils.getPortletContextUtil();
+        PropertyUtil propertyUtil = utils.getPropertyUtil();
+        
+        Node currentPage = pcUtil.getCurrentPage();
+		
+		cityJSON = propertyUtil.getString(currentPage, CityPortlet.META_CITIES_LIST);
+		if (cityJSON != null && cityJSON.trim().length() > 0) {
+        	try {
+            	cityServ.setCities((List<City>) gson.fromJson(cityJSON, citiesType));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+	}
+	
 	protected void saveEmployeesList(PortletRequest request) throws Exception {
         Utils utils = (Utils)request.getAttribute("sitevision.utils");
         PortletContextUtil pcUtil = utils.getPortletContextUtil();
@@ -130,16 +158,14 @@ public class EmployeePortlet implements PortletContextAware{
 		model.addAttribute("removeUrl", removeUrl);
 
 		//Get list of employee
-        /*if (!model.containsAttribute(C_EMPLOYEES_LIST)) {
-            loadEmployeesList(request);            
-            model.addAttribute(C_EMPLOYEES_LIST, service);
-        } else {
-        	service = (EmployeeService)model.asMap().get(C_EMPLOYEES_LIST);
-        }*/
 		if (init) {
 			loadEmployeesList(request); 
 			init = false;
 		}
+		
+		//get list of cities
+		loadCitiesList(request);
+		
       	List<Employee> lst = service.getEmployees();
       	model.addAttribute("employees", lst);
       	
@@ -166,6 +192,11 @@ public class EmployeePortlet implements PortletContextAware{
 		model.addAttribute("errors", errorMap);
 		model.addAttribute("employee", valuesMap);
 		
+		//get list of cities
+		loadCitiesList(request);
+		List<City> lst = cityServ.getCities();
+      	model.addAttribute("cities", lst);
+		
 		return "addEditEmployee";
 	}
 	
@@ -177,6 +208,7 @@ public class EmployeePortlet implements PortletContextAware{
 		String team = request.getParameter("employeeTeam");
 		String role = request.getParameter("employeeRole");
 		String salary = request.getParameter("employeeSalary");
+		String cityId = request.getParameter("citySelect");
 		
 		errorMap = new HashMap<String, String>();
 		if (name == null || name.trim().equalsIgnoreCase("")) {
@@ -203,7 +235,9 @@ public class EmployeePortlet implements PortletContextAware{
 		}
 		
 		if (errorMap.isEmpty()) {
-			service.addEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary)));
+			City city = cityServ.getCity(Integer.parseInt(cityId));
+			
+			service.addEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary), city));
 			try {
 				saveEmployeesList(request);
 			} catch (Exception e) {
@@ -256,6 +290,11 @@ public class EmployeePortlet implements PortletContextAware{
 		model.addAttribute("errors", errorMap);
 		model.addAttribute("employee", valuesMap);
 		
+		//get list of cities
+		loadCitiesList(request);
+		List<City> lst = cityServ.getCities();
+      	model.addAttribute("cities", lst);
+		
 		return "addEditEmployee";
 	}
 	
@@ -267,6 +306,7 @@ public class EmployeePortlet implements PortletContextAware{
 		String team = request.getParameter("employeeTeam");
 		String role = request.getParameter("employeeRole");
 		String salary = request.getParameter("employeeSalary");
+		String cityId = request.getParameter("citySelect");
 		
 		errorMap = new HashMap<String, String>();
 		
@@ -290,7 +330,8 @@ public class EmployeePortlet implements PortletContextAware{
 		}
 		
 		if (errorMap.isEmpty()) {
-			service.updateEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary)));
+			City city = cityServ.getCity(Integer.parseInt(cityId));
+			service.updateEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary), city));
 			try {
 				saveEmployeesList(request);
 			} catch (Exception e) {

@@ -10,17 +10,26 @@ public class Employee {
 	private String team;
 	private String role;
 	private int salary;
+	private City city;
 	
-	
-	public Employee (int id, String name, String email, String team, String role, int salary) {
+	public Employee (int id, String name, String email, String team, String role, int salary, City city) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.team = team;
 		this.role = role;
 		this.salary = salary;
+		this.city = city;
 	}
 	
+	public City getCity() {
+		return city;
+	}
+
+	public void setCity(City city) {
+		this.city = city;
+	}
+
 	public int getId() {
 		return id;
 	}
