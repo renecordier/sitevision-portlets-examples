@@ -9,9 +9,11 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletSession;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.xml.namespace.QName;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import se.niteco.event.CitiesUpdateEvent;
 import se.niteco.model.City;
 import se.niteco.service.CityService;
 import se.niteco.service.CityServiceImpl;
@@ -115,6 +118,7 @@ public class CityPortlet {
 		//Get list of employee
 		if (init) {
 			loadCityList(request); 
+			request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 			init = false;
 		}
       	List<City> lst = cityServ.getCities();
@@ -160,14 +164,13 @@ public class CityPortlet {
 		
 		cityServ.addCity(new City(Integer.parseInt(id), name));
 		
-		System.out.println(gson.toJson(cityServ.getCities()));
-		
 		try {
 			saveCityList(request);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 	}
 	
 	@RenderMapping(params = "action=showEdit")
@@ -213,10 +216,12 @@ public class CityPortlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 	}
 	
 	@ActionMapping(params = "action=deleteCity")
-	public void doRemove(ActionRequest request){
+	public void doRemove(ActionRequest request, ActionResponse response){
 		String cityId = request.getParameter("cityId");
 		if (cityId != null) { //delete action
 			cityServ.removeCity(Integer.parseInt(cityId));
@@ -226,6 +231,8 @@ public class CityPortlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 		}
 	}
 	

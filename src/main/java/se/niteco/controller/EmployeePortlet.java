@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-import org.springframework.web.portlet.context.PortletContextAware;
 
 import se.niteco.model.City;
 import se.niteco.model.Employee;
@@ -39,14 +38,14 @@ import com.google.gson.reflect.TypeToken;
  */
 @Controller
 @RequestMapping(value="VIEW")
-public class EmployeePortlet implements PortletContextAware{
+public class EmployeePortlet{
 	
 	@Autowired
 	@Qualifier("employeeService")
 	private EmployeeService service;
-	
+	/*
 	@Autowired
-	@Qualifier("cityService")
+	@Qualifier("cityService")*/
 	private CityService cityServ;
 	
 	private Map<String, String> errorMap;//error messages when adding or editing an employee
@@ -57,22 +56,11 @@ public class EmployeePortlet implements PortletContextAware{
 	protected final Gson gson = new Gson();
     
     private final Type employeesType =  new TypeToken<ArrayList<Employee>>() {}.getType();
-    private final Type citiesType =  new TypeToken<ArrayList<City>>() {}.getType();
+    //private final Type citiesType =  new TypeToken<ArrayList<City>>() {}.getType();
     
     private boolean init = true;
     
-    private PortletContext portletContext;
-    
-    private String metadataName;
     private VelocityEngine velocityEngine;
-    
-    public String getMetadataName() {
-		return this.metadataName;
-	}
-	
-	public void setMetadataName(String metadataName) {
-		this.metadataName = metadataName;
-	}
 	
 	/**
      * @param velocityEngine the velocityEngine to set
@@ -110,25 +98,7 @@ public class EmployeePortlet implements PortletContextAware{
         } 
 	}
 	
-	protected void loadCitiesList(PortletRequest request) {
-		String cityJSON = null;
-		cityServ = new CityServiceImpl();
-		
-		Utils utils = (Utils)request.getAttribute("sitevision.utils");
-        PortletContextUtil pcUtil = utils.getPortletContextUtil();
-        PropertyUtil propertyUtil = utils.getPropertyUtil();
-        
-        Node currentPage = pcUtil.getCurrentPage();
-		
-		cityJSON = propertyUtil.getString(currentPage, CityPortlet.META_CITIES_LIST);
-		if (cityJSON != null && cityJSON.trim().length() > 0) {
-        	try {
-            	cityServ.setCities((List<City>) gson.fromJson(cityJSON, citiesType));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-	}
+
 	
 	protected void saveEmployeesList(PortletRequest request) throws Exception {
         Utils utils = (Utils)request.getAttribute("sitevision.utils");
@@ -160,11 +130,14 @@ public class EmployeePortlet implements PortletContextAware{
 		//Get list of employee
 		if (init) {
 			loadEmployeesList(request); 
+			cityServ = new CityServiceImpl();
 			init = false;
 		}
 		
 		//get list of cities
-		loadCitiesList(request);
+		//loadCitiesList(request);
+		List<City> citiesSession = (List<City>) request.getPortletSession().getAttribute("cities", PortletSession.APPLICATION_SCOPE);
+		cityServ.setCities(citiesSession);
 		
       	List<Employee> lst = service.getEmployees();
       	model.addAttribute("employees", lst);
@@ -193,8 +166,10 @@ public class EmployeePortlet implements PortletContextAware{
 		model.addAttribute("employee", valuesMap);
 		
 		//get list of cities
-		loadCitiesList(request);
-		List<City> lst = cityServ.getCities();
+		//loadCitiesList(request);
+		List<City> citiesSession = (List<City>) request.getPortletSession().getAttribute("cities", PortletSession.APPLICATION_SCOPE);
+		cityServ.setCities(citiesSession);
+		List<City> lst = citiesSession;
       	model.addAttribute("cities", lst);
 		
 		return "addEditEmployee";
@@ -236,7 +211,6 @@ public class EmployeePortlet implements PortletContextAware{
 		
 		if (errorMap.isEmpty()) {
 			City city = cityServ.getCity(Integer.parseInt(cityId));
-			
 			service.addEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary), city));
 			try {
 				saveEmployeesList(request);
@@ -291,8 +265,10 @@ public class EmployeePortlet implements PortletContextAware{
 		model.addAttribute("employee", valuesMap);
 		
 		//get list of cities
-		loadCitiesList(request);
-		List<City> lst = cityServ.getCities();
+		//loadCitiesList(request);
+		List<City> citiesSession = (List<City>) request.getPortletSession().getAttribute("cities", PortletSession.APPLICATION_SCOPE);
+		cityServ.setCities(citiesSession);
+		List<City> lst = citiesSession;
       	model.addAttribute("cities", lst);
 		
 		return "addEditEmployee";
@@ -371,14 +347,4 @@ public class EmployeePortlet implements PortletContextAware{
 		errorMap = new HashMap<String, String>();
 		valuesMap = new HashMap<String, String>();
 	}
-
-	protected PortletContext getPortletContext() {
-        return portletContext;
-    }
-    
-    public void setPortletContext(PortletContext portletContext) {
-        this.portletContext = portletContext;
-        
-    }
-	
 }

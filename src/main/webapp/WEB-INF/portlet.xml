@@ -11,15 +11,18 @@
         <portlet-name>NitecoEmployeePortlet</portlet-name>
         <display-name>Niteco Employees Portlet</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-			<name>contextConfigLocation</name>
-            <value>/WEB-INF/NitecoEmployeePortlet-portlet.xml</value>
-		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<cache-scope>private</cache-scope>
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
             <portlet-mode>CONFIG</portlet-mode>
         </supports>
+        
+        <init-param>
+			<name>contextConfigLocation</name>
+            <value>/WEB-INF/NitecoEmployeePortlet-portlet.xml</value>
+		</init-param>
 		
         <portlet-info>
             <title>Niteco Employees</title>
@@ -38,15 +41,18 @@
         <portlet-name>NitecoCitiesPortlet</portlet-name>
         <display-name>Niteco Cities</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-			<name>contextConfigLocation</name>
-            <value>/WEB-INF/NitecoCitiesPortlet-portlet.xml</value>
-		</init-param>
+		<expiration-cache>60</expiration-cache>
+		<cache-scope>private</cache-scope>
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
         </supports>
-		
+        
+		<init-param>
+			<name>contextConfigLocation</name>
+            <value>/WEB-INF/NitecoCitiesPortlet-portlet.xml</value>
+		</init-param>		
+        
         <portlet-info>
             <title>Niteco Cities</title>
             <keywords>interactive</keywords>
