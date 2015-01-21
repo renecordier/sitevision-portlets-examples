@@ -13,7 +13,6 @@ import javax.portlet.PortletSession;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-import javax.xml.namespace.QName;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import se.niteco.event.CitiesUpdateEvent;
 import se.niteco.model.City;
 import se.niteco.service.CityService;
 import se.niteco.service.CityServiceImpl;
