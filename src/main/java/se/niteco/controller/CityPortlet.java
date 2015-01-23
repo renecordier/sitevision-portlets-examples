@@ -26,6 +26,7 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import se.niteco.communication.CityListSender;
 import se.niteco.model.City;
 import se.niteco.service.CityService;
 import se.niteco.service.CityServiceImpl;
@@ -49,7 +50,10 @@ public class CityPortlet {
     
     private boolean init = true;
     
-    private VelocityEngine velocityEngine; 
+    private VelocityEngine velocityEngine;
+    
+    @Autowired
+    private CityListSender cityListSender;
     
     /**
      * @param velocityEngine the velocityEngine to set
@@ -116,7 +120,8 @@ public class CityPortlet {
 		//Get list of employee
 		if (init) {
 			loadCityList(request); 
-			request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
+			//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
+			cityListSender.sendCityList(gson.toJson(cityServ.getCities()));
 			init = false;
 		}
       	List<City> lst = cityServ.getCities();
@@ -140,10 +145,6 @@ public class CityPortlet {
 		model.addAttribute("cancelUrl", cancelUrl);
 		
 		//Get list of employee
-		if (init) {
-			loadCityList(request); 
-			init = false;
-		}
       	List<City> lst = cityServ.getCities();
       	model.addAttribute("cities", lst);
       	
@@ -168,7 +169,8 @@ public class CityPortlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
+		//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
+		cityListSender.sendCityList(gson.toJson(cityServ.getCities()));
 	}
 	
 	@RenderMapping(params = "action=showEdit")
@@ -186,10 +188,6 @@ public class CityPortlet {
 		model.addAttribute("cancelUrl", cancelUrl);
 		
 		//Get list of employee
-		if (init) {
-			loadCityList(request); 
-			init = false;
-		}
       	List<City> lst = cityServ.getCities();
       	model.addAttribute("cities", lst);
 		
@@ -215,7 +213,8 @@ public class CityPortlet {
 			e.printStackTrace();
 		}
 		
-		request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
+		//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
+		cityListSender.sendCityList(gson.toJson(cityServ.getCities()));
 	}
 	
 	@ActionMapping(params = "action=deleteCity")
@@ -230,7 +229,8 @@ public class CityPortlet {
 				e.printStackTrace();
 			}
 			
-			request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
+			//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
+			cityListSender.sendCityList(gson.toJson(cityServ.getCities()));
 		}
 	}
 	

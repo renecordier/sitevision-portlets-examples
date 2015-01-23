@@ -11,8 +11,8 @@
         <portlet-name>NitecoEmployeePortlet</portlet-name>
         <display-name>Niteco Employees Portlet</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-		<expiration-cache>0</expiration-cache>
-		<cache-scope>private</cache-scope>
+		<!-- <expiration-cache>0</expiration-cache>
+		<cache-scope>private</cache-scope> -->
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
@@ -41,8 +41,8 @@
         <portlet-name>NitecoCitiesPortlet</portlet-name>
         <display-name>Niteco Cities</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-		<expiration-cache>60</expiration-cache>
-		<cache-scope>private</cache-scope>
+		<!--<expiration-cache>60</expiration-cache>
+		<cache-scope>private</cache-scope>-->
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
