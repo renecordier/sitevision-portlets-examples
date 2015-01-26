@@ -3,6 +3,7 @@ package se.niteco.controller;
 import javax.jcr.Node;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
 import javax.portlet.*;
 
@@ -42,7 +43,7 @@ import com.google.gson.reflect.TypeToken;
  */
 @Controller("employeePortlet")
 @RequestMapping(value="VIEW")
-public class EmployeePortlet implements MessageListener {
+public class EmployeePortlet {//implements MessageListener {
 	
 	@Autowired
 	@Qualifier("employeeService")
@@ -78,20 +79,13 @@ public class EmployeePortlet implements MessageListener {
         return velocityEngine;
     }
     
-    @Transactional
-    public void onMessage(Message message) {
-		System.out.println("Receiver invoked...");
-        try {
-        	TextMessage textMessage = (TextMessage) message;
-        	System.out.println("GOT A MESSAGE: " + textMessage.getText());
-        	if (EmployeePortlet.cityServ == null)
-        		EmployeePortlet.cityServ = new CityServiceImpl();
-        	EmployeePortlet.cityServ.setCities((List<City>) gson.fromJson(textMessage.getText(), citiesType));
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-        System.out.println("Going out of Receiver...Bye");
-	}
+    public void handleCitiesAlert (String message) {
+    	System.out.println("Receiver invoked...");
+    	if (EmployeePortlet.cityServ == null)
+    		EmployeePortlet.cityServ = new CityServiceImpl();
+    	EmployeePortlet.cityServ.setCities((List<City>) gson.fromJson(message, citiesType));
+    	System.out.println("Going out of Receiver...Bye");
+    }
 	
 	protected void loadEmployeesList(PortletRequest request) { 
 		String employeesJSON = null;

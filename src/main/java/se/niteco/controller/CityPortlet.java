@@ -9,7 +9,6 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletSession;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -45,7 +44,7 @@ public class CityPortlet {
 	
 	@Autowired
 	@Qualifier("citySender")
-	private CitySender citySender;
+	private static CitySender citySender;
 	
 	protected final static String META_CITIES_LIST = "cityList";
 	
@@ -125,7 +124,6 @@ public class CityPortlet {
 			loadCityList(request); 
 			citySender = new CitySenderImpl();
 			citySender.sendCities(gson.toJson(cityServ.getCities()));
-			//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 			init = false;
 		}
       	List<City> lst = cityServ.getCities();
@@ -173,7 +171,6 @@ public class CityPortlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 		citySender.sendCities(gson.toJson(cityServ.getCities()));
 	}
 	
@@ -217,7 +214,6 @@ public class CityPortlet {
 			e.printStackTrace();
 		}
 		
-		//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 		citySender.sendCities(gson.toJson(cityServ.getCities()));
 	}
 	
@@ -233,7 +229,6 @@ public class CityPortlet {
 				e.printStackTrace();
 			}
 			
-			//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 			citySender.sendCities(gson.toJson(cityServ.getCities()));
 		}
 	}

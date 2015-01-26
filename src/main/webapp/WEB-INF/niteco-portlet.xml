@@ -7,6 +7,8 @@
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:c="http://www.springframework.org/schema/c"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -28,47 +30,24 @@
 	<mvc:annotation-driven />
     <tx:annotation-driven />
     
-    <!-- For JMS Transaction -->
- 
-    <bean id="transactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
-        <property name="connectionFactory">
-            <ref bean="connectionFactory" />
-        </property>
-    </bean>
- 
-    <!-- JMS Destination -->
- 
-    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg value="queue" />
-    </bean>
- 
-    <!-- JmsTemplate -->
- 
-    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="defaultDestination" ref="destination" />
-    </bean>
- 
-    <!-- Connection Factory -->
- 
-    <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-            <property name="brokerURL" value="tcp://localhost:61616" />
-    </bean>
+    <amq:topic id="destination" physicalName="topic" />
+
+	<amq:connectionFactory id="connectionFactory" 
+      brokerURL="tcp://localhost:61616" />
+      
+    <bean id="jmsTemplate" 
+      class="org.springframework.jms.core.JmsTemplate"
+      c:_-ref="connectionFactory" 
+      p:defaultDestinationName="topic" />
+      
+    <bean id="citySender" class="se.niteco.jms.CitySenderImpl"
+      c:_-ref="jmsTemplate" />
     
-    <bean id="citySender" class="se.niteco.jms.CitySenderImpl">
-    	<property name="jmsTemplate" ref="jmsTemplate" />
-    </bean>
-    
-    
-    <!-- Listener -->
-    <!-- <bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="destination" ref="destination" />
-        <property name="messageListener" ref="cityReceiver"/>
-    </bean> -->
-    
-    <jms:listener-container connection-factory="connectionFactory">
-		<jms:listener destination="queue" ref="employeePortlet" />
+    <jms:listener-container container-type="default" connection-factory="connectionFactory"
+    	acknowledge="auto" concurrency="10-50">
+  		<jms:listener destination="topic" 
+                ref="employeePortlet" 
+                method="handleCitiesAlert" />
 	</jms:listener-container>
 
     <!-- VelocityConfig -->
