@@ -1,6 +1,9 @@
 package se.niteco.controller;
 
 import javax.jcr.Node;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
 import javax.portlet.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -8,6 +11,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
@@ -36,17 +40,15 @@ import com.google.gson.reflect.TypeToken;
 /**
  * Portlet class of Niteco's employees
  */
-@Controller
+@Controller("employeePortlet")
 @RequestMapping(value="VIEW")
-public class EmployeePortlet{
+public class EmployeePortlet implements MessageListener {
 	
 	@Autowired
 	@Qualifier("employeeService")
 	private EmployeeService service;
-	/*
-	@Autowired
-	@Qualifier("cityService")*/
-	private CityService cityServ;
+	
+	private static CityService cityServ;
 	
 	private Map<String, String> errorMap;//error messages when adding or editing an employee
 	private Map<String, String> valuesMap;//keeping values to show in add or edit employee
@@ -56,7 +58,7 @@ public class EmployeePortlet{
 	protected final Gson gson = new Gson();
     
     private final Type employeesType =  new TypeToken<ArrayList<Employee>>() {}.getType();
-    //private final Type citiesType =  new TypeToken<ArrayList<City>>() {}.getType();
+    private final Type citiesType =  new TypeToken<ArrayList<City>>() {}.getType();
     
     private boolean init = true;
     
@@ -75,6 +77,21 @@ public class EmployeePortlet{
     public VelocityEngine getVelocityEngine() {
         return velocityEngine;
     }
+    
+    @Transactional
+    public void onMessage(Message message) {
+		System.out.println("Receiver invoked...");
+        try {
+        	TextMessage textMessage = (TextMessage) message;
+        	System.out.println("GOT A MESSAGE: " + textMessage.getText());
+        	if (EmployeePortlet.cityServ == null)
+        		EmployeePortlet.cityServ = new CityServiceImpl();
+        	EmployeePortlet.cityServ.setCities((List<City>) gson.fromJson(textMessage.getText(), citiesType));
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        System.out.println("Going out of Receiver...Bye");
+	}
 	
 	protected void loadEmployeesList(PortletRequest request) { 
 		String employeesJSON = null;
@@ -129,15 +146,12 @@ public class EmployeePortlet{
 
 		//Get list of employee
 		if (init) {
+			//cityReceiver = new CityReceiver();
 			loadEmployeesList(request); 
-			cityServ = new CityServiceImpl();
+			if (EmployeePortlet.cityServ == null)
+        		EmployeePortlet.cityServ = new CityServiceImpl();
 			init = false;
 		}
-		
-		//get list of cities
-		//loadCitiesList(request);
-		List<City> citiesSession = (List<City>) request.getPortletSession().getAttribute("cities", PortletSession.APPLICATION_SCOPE);
-		cityServ.setCities(citiesSession);
 		
       	List<Employee> lst = service.getEmployees();
       	model.addAttribute("employees", lst);
@@ -166,10 +180,7 @@ public class EmployeePortlet{
 		model.addAttribute("employee", valuesMap);
 		
 		//get list of cities
-		//loadCitiesList(request);
-		List<City> citiesSession = (List<City>) request.getPortletSession().getAttribute("cities", PortletSession.APPLICATION_SCOPE);
-		cityServ.setCities(citiesSession);
-		List<City> lst = citiesSession;
+		List<City> lst = EmployeePortlet.cityServ.getCities();
       	model.addAttribute("cities", lst);
 		
 		return "addEditEmployee";
@@ -210,7 +221,7 @@ public class EmployeePortlet{
 		}
 		
 		if (errorMap.isEmpty()) {
-			City city = cityServ.getCity(Integer.parseInt(cityId));
+			City city = EmployeePortlet.cityServ.getCity(Integer.parseInt(cityId));
 			service.addEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary), city));
 			try {
 				saveEmployeesList(request);
@@ -265,10 +276,7 @@ public class EmployeePortlet{
 		model.addAttribute("employee", valuesMap);
 		
 		//get list of cities
-		//loadCitiesList(request);
-		List<City> citiesSession = (List<City>) request.getPortletSession().getAttribute("cities", PortletSession.APPLICATION_SCOPE);
-		cityServ.setCities(citiesSession);
-		List<City> lst = citiesSession;
+		List<City> lst = EmployeePortlet.cityServ.getCities();
       	model.addAttribute("cities", lst);
 		
 		return "addEditEmployee";
@@ -306,7 +314,7 @@ public class EmployeePortlet{
 		}
 		
 		if (errorMap.isEmpty()) {
-			City city = cityServ.getCity(Integer.parseInt(cityId));
+			City city = EmployeePortlet.cityServ.getCity(Integer.parseInt(cityId));
 			service.updateEmployee(new Employee(Integer.parseInt(id), name, email, team, role, Integer.parseInt(salary), city));
 			try {
 				saveEmployeesList(request);

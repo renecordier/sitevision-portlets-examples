@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.portlet.PortletContext;
+import se.niteco.service.EmployeeService;
 
 import org.springframework.stereotype.Service;
 

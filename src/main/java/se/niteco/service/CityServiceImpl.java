@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import se.niteco.model.City;
+import se.niteco.service.CityService;
 
 @Service(value="cityService")
 public class CityServiceImpl implements CityService {
