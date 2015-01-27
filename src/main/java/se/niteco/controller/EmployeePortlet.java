@@ -43,7 +43,7 @@ import com.google.gson.reflect.TypeToken;
  */
 @Controller("employeePortlet")
 @RequestMapping(value="VIEW")
-public class EmployeePortlet {//implements MessageListener {
+public class EmployeePortlet {
 	
 	@Autowired
 	@Qualifier("employeeService")
@@ -59,7 +59,7 @@ public class EmployeePortlet {//implements MessageListener {
 	protected final Gson gson = new Gson();
     
     private final Type employeesType =  new TypeToken<ArrayList<Employee>>() {}.getType();
-    private final Type citiesType =  new TypeToken<ArrayList<City>>() {}.getType();
+    //private final Type citiesType =  new TypeToken<ArrayList<City>>() {}.getType();
     
     private boolean init = true;
     
@@ -79,11 +79,11 @@ public class EmployeePortlet {//implements MessageListener {
         return velocityEngine;
     }
     
-    public void handleCitiesAlert (String message) {
+    public void handleCitiesAlert (List<City> cities) {
     	System.out.println("Receiver invoked...");
     	if (EmployeePortlet.cityServ == null)
     		EmployeePortlet.cityServ = new CityServiceImpl();
-    	EmployeePortlet.cityServ.setCities((List<City>) gson.fromJson(message, citiesType));
+    	EmployeePortlet.cityServ.setCities(cities);
     	System.out.println("Going out of Receiver...Bye");
     }
 	

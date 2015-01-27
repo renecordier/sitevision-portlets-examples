@@ -123,7 +123,7 @@ public class CityPortlet {
 			System.out.println("init");
 			loadCityList(request); 
 			citySender = new CitySenderImpl();
-			citySender.sendCities(gson.toJson(cityServ.getCities()));
+			citySender.sendCities(cityServ.getCities());
 			init = false;
 		}
       	List<City> lst = cityServ.getCities();
@@ -171,7 +171,7 @@ public class CityPortlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		citySender.sendCities(gson.toJson(cityServ.getCities()));
+		citySender.sendCities(cityServ.getCities());
 	}
 	
 	@RenderMapping(params = "action=showEdit")
@@ -214,7 +214,7 @@ public class CityPortlet {
 			e.printStackTrace();
 		}
 		
-		citySender.sendCities(gson.toJson(cityServ.getCities()));
+		citySender.sendCities(cityServ.getCities());
 	}
 	
 	@ActionMapping(params = "action=deleteCity")
@@ -229,7 +229,7 @@ public class CityPortlet {
 				e.printStackTrace();
 			}
 			
-			citySender.sendCities(gson.toJson(cityServ.getCities()));
+			citySender.sendCities(cityServ.getCities());
 		}
 	}
 	

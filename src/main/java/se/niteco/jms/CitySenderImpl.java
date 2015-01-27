@@ -1,6 +1,9 @@
 package se.niteco.jms;
 
+import java.util.List;
+
 import se.niteco.jms.CitySender;
+import se.niteco.model.City;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,7 +32,7 @@ public class CitySenderImpl implements CitySender {
 		CitySenderImpl.jmsTemplate = jmsTemplate;
 	}
 	
-	public void sendCities(final String cities) {
+	public void sendCities(final List<City> cities) {
     	 System.out.println("Sending JMS Message");
          System.out.println(cities);
   
