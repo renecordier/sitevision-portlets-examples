@@ -170,10 +170,15 @@ public class EmployeePortlet {
 	
 	@RenderMapping(params = "action=editPic")
 	public String editPic(RenderRequest request, RenderResponse response, Model model){
-		
 		String id = (String) request.getParameter("employeeId");
+		//set change image url
 		PortletURL updateImageUrl = response.createActionURL();
 		updateImageUrl.setParameter("action", "changeImage");
+		
+		//Set cancel url
+		PortletURL cancelUrl = response.createActionURL();
+		cancelUrl.setParameter("action", "cancel");
+		model.addAttribute("cancelUrl", cancelUrl);
 		
 		model.addAttribute("employeeId", id);
 		model.addAttribute("updateImageUrl", updateImageUrl);
