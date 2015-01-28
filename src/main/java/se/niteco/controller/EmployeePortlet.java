@@ -149,7 +149,7 @@ public class EmployeePortlet {
 		
       	List<Employee> lst = service.getEmployees();
       	model.addAttribute("employees", lst);
-      	
+      	model.addAttribute("request", request);
       	String mode = pref.getValue("mode", "View");
 		model.addAttribute("mode", mode);
 		return "listEmployee";
@@ -176,6 +176,7 @@ public class EmployeePortlet {
 		//get list of cities
 		List<City> lst = EmployeePortlet.cityServ.getCities();
       	model.addAttribute("cities", lst);
+      	model.addAttribute("request", request);
 		
 		return "addEditEmployee";
 	}
@@ -272,6 +273,7 @@ public class EmployeePortlet {
 		//get list of cities
 		List<City> lst = EmployeePortlet.cityServ.getCities();
       	model.addAttribute("cities", lst);
+      	model.addAttribute("request", request);
 		
 		return "addEditEmployee";
 	}

@@ -1,0 +1,4 @@
+#set ( $cPath = $request.getContextPath() )
+<head>
+<link href="${cPath}/css/main.css" rel="stylesheet">
+</head>

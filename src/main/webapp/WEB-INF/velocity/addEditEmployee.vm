@@ -1,3 +1,6 @@
+#parse("head.vm")
+
+<div class="portlet employees">
 #if ($addPage)
 <h3>Add employee</h3>
 #else
@@ -51,12 +54,13 @@
 		</td>
 		<td></td>
 	</tr>
-	<tr>
-		#if ($addPage)
-		<td><input type="submit" value="Register" /></td>
-		#else
-		<td><input type="submit" value="Update" /></td>
-		#end
-		<td><a href="$cancelUrl" >Cancel</a></td>
-	</tr>
 </table>
+
+#if ($addPage)
+<input type="submit" value="Register" />
+#else
+<input type="submit" value="Update" />
+#end
+<a href="$cancelUrl" >Cancel</a>
+</form>
+</div>

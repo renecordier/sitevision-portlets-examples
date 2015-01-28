@@ -1,19 +1,21 @@
-<div class="employees">
+#parse("head.vm")
+
+<div class="portlet employees">
 <h3>This is Niteco employees list using Portlet API, Spring and Velocity and API</h3>
 
 <form action="$showAddUrl" method="post">
 	#if ($employees)
-	<table>
+	<table class="table-portlet">
 		<tr>
-			<td>Id</td>
-			<td>Name</td>
-			<td>Email</td>
-			<td>Team</td>
-			<td>Role</td>
-			<td>Salary</td>
-			<td>City</td>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Team</th>
+			<th>Role</th>
+			<th>Salary</th>
+			<th>City</th>
 			#if ($mode.equals("Edit"))
-			<td>Actions</td>
+			<th>Actions</th>
 			#end
 		</tr>
 		#foreach ($employee in $employees)

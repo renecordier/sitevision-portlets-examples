@@ -79,7 +79,7 @@ public class CityPortlet {
         PropertyUtil propertyUtil = utils.getPropertyUtil();
         
         Node currentPage = pcUtil.getCurrentPage();
-       
+        
         cityJSON = propertyUtil.getString(currentPage, META_CITIES_LIST);
         System.out.println(cityJSON);
         
@@ -102,15 +102,15 @@ public class CityPortlet {
     }
 	
 	@RenderMapping
-	public String showEmployee(Model model, RenderRequest request, RenderResponse response, PortletPreferences pref){
+	public String showCity(Model model, RenderRequest request, RenderResponse response, PortletPreferences pref){
 		//Set add url
 		PortletURL showAddUrl = response.createRenderURL();
-		showAddUrl.setParameter("action", "showAdd");
+		showAddUrl.setParameter("action", "showAddCity");
 		model.addAttribute("showAddUrl", showAddUrl);
 
 		//Set edit url
 		PortletURL editUrl = response.createRenderURL();
-		editUrl.setParameter("action", "showEdit");
+		editUrl.setParameter("action", "showEditCity");
 		model.addAttribute("editUrl", editUrl);
 
 		//Set remove url
@@ -128,13 +128,13 @@ public class CityPortlet {
 		}
       	List<City> lst = cityServ.getCities();
       	model.addAttribute("cities", lst);
-      	
+      	model.addAttribute("request", request);
       	model.addAttribute("mode", "view");
       	
 		return "listCities";
 	}
 	
-	@RenderMapping(params = "action=showAdd")
+	@RenderMapping(params = "action=showAddCity")
 	public String showAdd(Model model, RenderRequest request, RenderResponse response){
 		//Set insert url
 		PortletURL insertCityUrl = response.createActionURL();
@@ -154,6 +154,7 @@ public class CityPortlet {
       	
       	int idNew = cityServ.getNewCityId();
       	model.addAttribute("idNew", idNew);
+      	model.addAttribute("request", request);
       	
 		return "listCities";
 	}
@@ -174,7 +175,7 @@ public class CityPortlet {
 		citySender.sendCities(cityServ.getCities());
 	}
 	
-	@RenderMapping(params = "action=showEdit")
+	@RenderMapping(params = "action=showEditCity")
 	public String showEdit(Model model, RenderRequest request, RenderResponse response){
 
 		//Set url to model
@@ -195,7 +196,7 @@ public class CityPortlet {
 		//Get selected city
 		String cityId = request.getParameter("cityId");
 		model.addAttribute("idEdit", Integer.parseInt(cityId));
-		
+		model.addAttribute("request", request);
 		model.addAttribute("mode", "edit");
 
 		return "listCities";
