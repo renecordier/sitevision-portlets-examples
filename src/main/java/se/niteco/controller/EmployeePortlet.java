@@ -1,5 +1,6 @@
 package se.niteco.controller;
 
+import javax.imageio.ImageIO;
 import javax.jcr.Node;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -28,7 +29,12 @@ import senselogic.sitevision.api.Utils;
 import senselogic.sitevision.api.context.PortletContextUtil;
 import senselogic.sitevision.api.metadata.MetadataUtil;
 import senselogic.sitevision.api.property.PropertyUtil;
+import senselogic.sitevision.api.render.ImageRenderer;
+import senselogic.sitevision.api.resource.ResourceLocatorUtil;
+import senselogic.sitevision.api.webresource.ImageUtil;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +70,8 @@ public class EmployeePortlet {
     private boolean init = true;
     
     private VelocityEngine velocityEngine;
+    
+    private final String UPLOAD_FOLDER = "/home/rene/Pictures/sitevision";
 	
 	/**
      * @param velocityEngine the velocityEngine to set
@@ -137,6 +145,11 @@ public class EmployeePortlet {
 		PortletURL removeUrl = response.createActionURL();
 		removeUrl.setParameter("action", "deleteEmployee");
 		model.addAttribute("removeUrl", removeUrl);
+		
+		//set edit pic url
+		PortletURL editPicUrl = response.createRenderURL();
+		editPicUrl.setParameter("action", "editPic");
+		model.addAttribute("editPicUrl", editPicUrl);
 
 		//Get list of employee
 		if (init) {
@@ -153,6 +166,20 @@ public class EmployeePortlet {
       	String mode = pref.getValue("mode", "View");
 		model.addAttribute("mode", mode);
 		return "listEmployee";
+	}
+	
+	@RenderMapping(params = "action=editPic")
+	public String editPic(RenderRequest request, RenderResponse response, Model model){
+		
+		String id = (String) request.getParameter("employeeId");
+		PortletURL updateImageUrl = response.createActionURL();
+		updateImageUrl.setParameter("action", "changeImage");
+		
+		model.addAttribute("employeeId", id);
+		model.addAttribute("updateImageUrl", updateImageUrl);
+		model.addAttribute("request", request);
+		
+		return "imageForm";
 	}
 	
 	@RenderMapping(params = "action=showAdd")
@@ -350,5 +377,54 @@ public class EmployeePortlet {
 	public void doCancel(ActionRequest request){
 		errorMap = new HashMap<String, String>();
 		valuesMap = new HashMap<String, String>();
+	}
+	
+	@ActionMapping(params = "action=changeImage")
+	public void updateImage(ActionRequest request, ActionResponse response) 
+			throws Exception{
+		String id = (String) request.getParameter("id");
+		
+		File inputFile = (File) request.getAttribute("file");
+		File outputFile = new File(UPLOAD_FOLDER + "/" + id + ".jpg");
+		
+		BufferedImage img = ImageIO.read(inputFile);
+		ImageIO.write(img, "jpg", outputFile);
+		
+		Utils utils = (Utils) request.getAttribute("sitevision.utils");
+		
+		
+		//Upload image to sitevision
+		ImageUtil imageUtil = utils.getImageUtil();
+		ResourceLocatorUtil rlUtil = utils.getResourceLocatorUtil();
+		Node imgNode = rlUtil.getImageRepository();
+		
+		boolean hasNode = imgNode.hasNode(id + ".jpg");
+		if(hasNode == false){
+			imageUtil.createImage(imgNode, id + ".jpg", "file://" + outputFile.getPath());
+		}
+		else{
+			imageUtil.updateBinaryContent(imgNode.getNode(id + ".jpg"), "file://" + outputFile.getPath());
+		}
+		
+		Node imgLink = imgNode.getNode(id + ".jpg");
+		
+		ImageRenderer imgRender = utils.getImageRenderer();
+		imgRender.setImage(imgLink);
+		imgRender.setDescription(id);
+		imgRender.setStyle("picture");
+		
+		//Update image to employee
+		Employee emp = service.getEmployee(Integer.parseInt(id));
+		emp.setPicture(imgRender.render());		
+		service.updateEmployee(emp);
+		
+		outputFile.delete();
+		
+		try {
+			saveEmployeesList(request);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

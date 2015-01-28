@@ -33,8 +33,8 @@
 				#if ($mode.equals("view"))
 				#set( $editCity = $editUrl + "&cityId=" + $city.cityId )
                 #set( $removeCity = $removeUrl + "&cityId=" + $city.cityId) 
-                <a href="$editCity" >Edit</a>
-                <a href="$removeCity" onclick="return confirm('Are you sure to delete this city ?')" >Delete</a>
+                <a href="$editCity" class="button">Edit</a>
+                <a href="$removeCity" class="button" onclick="return confirm('Are you sure to delete this city ?')" >Delete</a>
                 #end
 			</td>
 			#end
@@ -46,7 +46,7 @@
 			<td><input name="addName" class="name-city-input" /></td>
 			<td>
 				<input type="submit" value="Add" />
-				<a href="$cancelUrl" >Cancel</a>
+				<a href="$cancelUrl" class="button" >Cancel</a>
 			</td>
 		</tr>	
 		#end

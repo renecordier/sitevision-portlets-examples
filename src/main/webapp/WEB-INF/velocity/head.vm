@@ -1,4 +1,6 @@
 #set ( $cPath = $request.getContextPath() )
 <head>
 <link href="${cPath}/css/main.css" rel="stylesheet">
+<script src="${cPath}/js/jquery.uploadfile.js"></script>
+<link href="${cPath}/css/uploadfile.css" rel="stylesheet">
 </head>

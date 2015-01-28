@@ -61,6 +61,6 @@
 #else
 <input type="submit" value="Update" />
 #end
-<a href="$cancelUrl" >Cancel</a>
+<a href="$cancelUrl" class="button" >Cancel</a>
 </form>
 </div>
