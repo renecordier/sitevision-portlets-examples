@@ -94,3 +94,17 @@ table {
 .name-city-input {
 	width: 150px;
 }
+
+.tempPic, .currentPic img {
+	width: 80px;
+	height: 80px;
+}
+
+.tempPic {
+	display: none;
+}
+
+.changePicCaption {
+	font-size: 10.5pt;
+	font-weight: bold;
+}

@@ -1,37 +1,26 @@
 #parse("head.vm")
 
-<script type="text/javascript">
-
-$(function(){
-
-    $("#fileUpload").change(function(){
-        previewImage(this);
-    });
-    
-});
-
-function previewImage(input){
-    var reader = new FileReader();
-    
-    reader.onload = function(e){
-        $("#tempImage").attr("src", e.target.result);
-    }
-    
-    reader.readAsDataURL(input.files[0]);
-}
-
-</script>
 <div class="portlet employees">
 <h2>Employee's picture</h2>
 
 <form action="$updateImageUrl" method="post" enctype="multipart/form-data">
-    <span style="font-size: 10.5pt;">
+    <span class="changePicCaption">
         <b>Employee ID: $employeeId</b>
     </span>
-    </br></br>
+    <br/>
+    <span>Current picture</span>
+    <br/>
+    <div class="currentPic">
+    #if ($employee.picture)
+    	$employee.picture
+    #else
+        <img alt="$employee.id" src="${cPath}/img/no-avatar.jpg" />
+    #end
+    </div>
+    <br/>
     <input id="fileUpload" type="file" name="file" value="Select File"/>
     <div id="imgFrame">
-        <img id="tempImage" style="width:80px; height:80px" src="#" />
+        <img id="tempImage" class="tempPic" src="#" />
     </div>
     </br></br>
     <input type="submit" value="Submit" />

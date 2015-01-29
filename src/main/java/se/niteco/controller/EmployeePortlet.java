@@ -1,11 +1,9 @@
 package se.niteco.controller;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.jcr.Node;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.ObjectMessage;
-import javax.jms.TextMessage;
 import javax.portlet.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,7 +11,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
@@ -35,9 +32,11 @@ import senselogic.sitevision.api.webresource.ImageUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -171,6 +170,7 @@ public class EmployeePortlet {
 	@RenderMapping(params = "action=editPic")
 	public String editPic(RenderRequest request, RenderResponse response, Model model){
 		String id = (String) request.getParameter("employeeId");
+		Employee emp = service.getEmployee(Integer.parseInt(id));
 		//set change image url
 		PortletURL updateImageUrl = response.createActionURL();
 		updateImageUrl.setParameter("action", "changeImage");
@@ -181,6 +181,7 @@ public class EmployeePortlet {
 		model.addAttribute("cancelUrl", cancelUrl);
 		
 		model.addAttribute("employeeId", id);
+		model.addAttribute("employee", emp);
 		model.addAttribute("updateImageUrl", updateImageUrl);
 		model.addAttribute("request", request);
 		
@@ -390,10 +391,13 @@ public class EmployeePortlet {
 		String id = (String) request.getParameter("id");
 		
 		File inputFile = (File) request.getAttribute("file");
-		File outputFile = new File(UPLOAD_FOLDER + "/" + id + ".jpg");
+		String format = getFormatName(inputFile);
+		if (format.equals("jpeg"))
+			format = "jpg";
+		File outputFile = new File(UPLOAD_FOLDER + "/" + id + "." + format);
 		
 		BufferedImage img = ImageIO.read(inputFile);
-		ImageIO.write(img, "jpg", outputFile);
+		ImageIO.write(img, format, outputFile);
 		
 		Utils utils = (Utils) request.getAttribute("sitevision.utils");
 		
@@ -403,20 +407,19 @@ public class EmployeePortlet {
 		ResourceLocatorUtil rlUtil = utils.getResourceLocatorUtil();
 		Node imgNode = rlUtil.getImageRepository();
 		
-		boolean hasNode = imgNode.hasNode(id + ".jpg");
+		boolean hasNode = imgNode.hasNode(id + "." + format);
 		if(hasNode == false){
-			imageUtil.createImage(imgNode, id + ".jpg", "file://" + outputFile.getPath());
+			imageUtil.createImage(imgNode, id + "." + format, "file://" + outputFile.getPath());
 		}
 		else{
-			imageUtil.updateBinaryContent(imgNode.getNode(id + ".jpg"), "file://" + outputFile.getPath());
+			imageUtil.updateBinaryContent(imgNode.getNode(id + "." + format), "file://" + outputFile.getPath());
 		}
 		
-		Node imgLink = imgNode.getNode(id + ".jpg");
+		Node imgLink = imgNode.getNode(id + "." + format);
 		
 		ImageRenderer imgRender = utils.getImageRenderer();
 		imgRender.setImage(imgLink);
 		imgRender.setDescription(id);
-		imgRender.setStyle("picture");
 		
 		//Update image to employee
 		Employee emp = service.getEmployee(Integer.parseInt(id));
@@ -431,5 +434,21 @@ public class EmployeePortlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private static String getFormatName(Object o) {
+	    try {
+	      ImageInputStream iis = ImageIO.createImageInputStream(o);
+	      Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
+	      if (!iter.hasNext()) {
+	        return null;
+	      }
+	      ImageReader reader = (ImageReader) iter.next();
+	      iis.close();
+
+	      return reader.getFormatName().toLowerCase();
+	    } catch (IOException e) {
+	    }
+	    return null;
 	}
 }
