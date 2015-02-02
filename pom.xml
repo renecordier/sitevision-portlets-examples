@@ -151,10 +151,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>sitevisionrepo</id>
-            <url>http://maven.sitevision.se/artifactory/repo</url>
-        </repository>
+       
     </repositories>
 
     <pluginRepositories>

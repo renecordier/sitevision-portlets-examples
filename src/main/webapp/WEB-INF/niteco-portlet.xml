@@ -26,23 +26,26 @@
         http://activemq.apache.org/schema/core/activemq-core.xsd
     ">
 	<context:component-scan base-package="se.niteco" /> 
-	<context:annotation-config />
 	<mvc:annotation-driven />
     <tx:annotation-driven />
-    
+    <!--  ActiveMQ topic declaration -->
     <amq:topic id="destination" physicalName="topic" />
 
+	 <!--  ActiveMQ connection factory -->
 	<amq:connectionFactory id="connectionFactory" 
       brokerURL="tcp://localhost:61616" />
       
+       <!-- JMS template declaration -->
     <bean id="jmsTemplate" 
       class="org.springframework.jms.core.JmsTemplate"
       c:_-ref="connectionFactory" 
       p:defaultDestinationName="topic" />
       
+     <!-- Producer declaration -->  
     <bean id="citySender" class="se.niteco.jms.CitySenderImpl"
       c:_-ref="jmsTemplate" />
     
+     <!-- Listener consumer jms -->
     <jms:listener-container container-type="default" connection-factory="connectionFactory"
     	acknowledge="auto" concurrency="10-50">
   		<jms:listener destination="topic" 

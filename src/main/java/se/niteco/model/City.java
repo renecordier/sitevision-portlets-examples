@@ -2,6 +2,9 @@ package se.niteco.model;
 
 import java.io.Serializable;
 
+/**
+ * Class City. This is the data model that we need to characterize an city where an employee from Niteco is working 
+ */
 public class City implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int cityId;

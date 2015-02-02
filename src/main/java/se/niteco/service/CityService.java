@@ -4,6 +4,9 @@ import java.util.List;
 
 import se.niteco.model.City;
 
+/**
+ * Factory class to implement the service managing the list of cities
+ */
 public interface CityService {
 	List<City> getCities();
 	void setCities(List<City> cities);

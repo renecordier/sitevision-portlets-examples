@@ -35,18 +35,21 @@ import senselogic.sitevision.api.context.PortletContextUtil;
 import senselogic.sitevision.api.metadata.MetadataUtil;
 import senselogic.sitevision.api.property.PropertyUtil;
 
+/**
+ * Public class of the city portlet
+ */
 @Controller
 @RequestMapping(value="VIEW")
 public class CityPortlet {
 	@Autowired
 	@Qualifier("cityService")
-	private CityService cityServ;
+	private CityService cityServ; //DI of city service
 	
 	@Autowired
 	@Qualifier("citySender")
-	private static CitySender citySender;
+	private static CitySender citySender; //DI of city sender
 	
-	protected final static String META_CITIES_LIST = "cityList";
+	protected final static String META_CITIES_LIST = "cityList"; //metadata name
 	
 	protected final Gson gson = new Gson();
     
@@ -54,7 +57,7 @@ public class CityPortlet {
     
     private boolean init = true;
     
-    private VelocityEngine velocityEngine; 
+    private VelocityEngine velocityEngine; // DI of velocity engine
     
     /**
      * @param velocityEngine the velocityEngine to set
@@ -70,6 +73,10 @@ public class CityPortlet {
         return velocityEngine;
     }
     
+    /**
+     * Load the list of cities from sitevision's metadatas
+     * @param request
+     */
     protected void loadCityList(PortletRequest request) { 
 		String cityJSON = null;
 		cityServ = new CityServiceImpl();
@@ -92,6 +99,11 @@ public class CityPortlet {
         } 
 	}
 	
+    /**
+     * Save the list of cities in sitevision's metadatas
+     * @param request
+     * @throws Exception
+     */
 	protected void saveCityList(PortletRequest request) throws Exception {
         Utils utils = (Utils)request.getAttribute("sitevision.utils");
         PortletContextUtil pcUtil = utils.getPortletContextUtil();
@@ -101,6 +113,14 @@ public class CityPortlet {
         metaUtil.setMetadataPropertyValue(currentPage, META_CITIES_LIST, gson.toJson(cityServ.getCities()));
     }
 	
+	/**
+	 * Default view mode of city portlet, showing the list of cities
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @param pref
+	 * @return
+	 */
 	@RenderMapping
 	public String showCity(Model model, RenderRequest request, RenderResponse response, PortletPreferences pref){
 		//Set add url
@@ -134,6 +154,13 @@ public class CityPortlet {
 		return "listCities";
 	}
 	
+	/**
+	 * View to add a city in the list
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RenderMapping(params = "action=showAddCity")
 	public String showAdd(Model model, RenderRequest request, RenderResponse response){
 		//Set insert url
@@ -159,6 +186,11 @@ public class CityPortlet {
 		return "listCities";
 	}
 	
+	/**
+	 * Action to insert a city in the list
+	 * @param request
+	 * @param response
+	 */
 	@ActionMapping(params = "action=insertCity")
 	public void doAdd(ActionRequest request, ActionResponse response){
 		String id = request.getParameter("addId");
@@ -175,6 +207,13 @@ public class CityPortlet {
 		citySender.sendCities(cityServ.getCities());
 	}
 	
+	/**
+	 * View to edit a city in the list
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RenderMapping(params = "action=showEditCity")
 	public String showEdit(Model model, RenderRequest request, RenderResponse response){
 
@@ -202,6 +241,11 @@ public class CityPortlet {
 		return "listCities";
 	}
 	
+	/**
+	 * Action to update a city from the list
+	 * @param request
+	 * @param response
+	 */
 	@ActionMapping(params = "action=updateCity")
 	public void doEdit(ActionRequest request, ActionResponse response){
 		String id = request.getParameter("idUpdate");
@@ -218,6 +262,11 @@ public class CityPortlet {
 		citySender.sendCities(cityServ.getCities());
 	}
 	
+	/**
+	 * Action to delete a city from the list
+	 * @param request
+	 * @param response
+	 */
 	@ActionMapping(params = "action=deleteCity")
 	public void doRemove(ActionRequest request, ActionResponse response){
 		String cityId = request.getParameter("cityId");
@@ -234,6 +283,10 @@ public class CityPortlet {
 		}
 	}
 	
+	/**
+	 * Cancel action
+	 * @param request
+	 */
 	@ActionMapping(params = "action=cancel")
 	public void doCancel(ActionRequest request){
 		

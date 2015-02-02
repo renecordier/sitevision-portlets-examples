@@ -52,25 +52,24 @@ public class EmployeePortlet {
 	
 	@Autowired
 	@Qualifier("employeeService")
-	private EmployeeService service;
+	private EmployeeService service; //DI of employee service
 	
-	private static CityService cityServ;
+	private static CityService cityServ; //city service
 	
 	private Map<String, String> errorMap;//error messages when adding or editing an employee
 	private Map<String, String> valuesMap;//keeping values to show in add or edit employee
 	
-	protected final static String META_EMPLOYEES_LIST = "employeeList";
+	protected final static String META_EMPLOYEES_LIST = "employeeList";//metadata name 
 	
 	protected final Gson gson = new Gson();
     
     private final Type employeesType =  new TypeToken<ArrayList<Employee>>() {}.getType();
-    //private final Type citiesType =  new TypeToken<ArrayList<City>>() {}.getType();
     
     private boolean init = true;
     
-    private VelocityEngine velocityEngine;
+    private VelocityEngine velocityEngine; //velocity engine
     
-    private final String UPLOAD_FOLDER = "/home/rene/Pictures/sitevision";
+    private final String UPLOAD_FOLDER = "/home/rene/Pictures/sitevision"; //folder to store temporary pictures on the server
 	
 	/**
      * @param velocityEngine the velocityEngine to set
@@ -86,6 +85,11 @@ public class EmployeePortlet {
         return velocityEngine;
     }
     
+    /**
+     * Consuming messages from city portlet to get an updated list of the cities
+     * an employee can work in.
+     * @param cities
+     */
     public void handleCitiesAlert (List<City> cities) {
     	System.out.println("Receiver invoked...");
     	if (EmployeePortlet.cityServ == null)
@@ -94,6 +98,10 @@ public class EmployeePortlet {
     	System.out.println("Going out of Receiver...Bye");
     }
 	
+    /**
+     * Loading the list of employees from the metadata
+     * @param request
+     */
 	protected void loadEmployeesList(PortletRequest request) { 
 		String employeesJSON = null;
 		service = new EmployeeServiceImpl();
@@ -116,8 +124,11 @@ public class EmployeePortlet {
         } 
 	}
 	
-
-	
+	/**
+	 * Saving the list of employees in the metadata
+	 * @param request
+	 * @throws Exception
+	 */
 	protected void saveEmployeesList(PortletRequest request) throws Exception {
         Utils utils = (Utils)request.getAttribute("sitevision.utils");
         PortletContextUtil pcUtil = utils.getPortletContextUtil();
@@ -127,6 +138,14 @@ public class EmployeePortlet {
         metaUtil.setMetadataPropertyValue(currentPage, META_EMPLOYEES_LIST, gson.toJson(service.getEmployees()));
     }
 	
+	/**
+	 * Deafult view mode to show the list of employees
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @param pref
+	 * @return
+	 */
 	@RenderMapping
 	public String showEmployee(Model model, RenderRequest request, RenderResponse response, PortletPreferences pref){
 	
@@ -167,6 +186,13 @@ public class EmployeePortlet {
 		return "listEmployee";
 	}
 	
+	/**
+	 * View for editing an employee's picture
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
 	@RenderMapping(params = "action=editPic")
 	public String editPic(RenderRequest request, RenderResponse response, Model model){
 		String id = (String) request.getParameter("employeeId");
@@ -188,6 +214,13 @@ public class EmployeePortlet {
 		return "imageForm";
 	}
 	
+	/**
+	 * View for adding an employee to the list
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RenderMapping(params = "action=showAdd")
 	public String showAdd(Model model, RenderRequest request, RenderResponse response){
 		
@@ -214,6 +247,11 @@ public class EmployeePortlet {
 		return "addEditEmployee";
 	}
 	
+	/**
+	 * Action for adding an employee to the list
+	 * @param request
+	 * @param response
+	 */
 	@ActionMapping(params = "action=insertEmployee")
 	public void doAdd(ActionRequest request, ActionResponse response){
 		String id = request.getParameter("employeeId");
@@ -271,6 +309,13 @@ public class EmployeePortlet {
 		}	
 	}
 	
+	/**
+	 * View for editing en employee
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RenderMapping(params = "action=showEdit")
 	public String showEdit(Model model, RenderRequest request, RenderResponse response){
 
@@ -311,6 +356,11 @@ public class EmployeePortlet {
 		return "addEditEmployee";
 	}
 	
+	/**
+	 * Action for updating an employee in the list
+	 * @param request
+	 * @param response
+	 */
 	@ActionMapping(params = "action=updateEmployee")
 	public void doEdit(ActionRequest request, ActionResponse response){
 		String id = request.getParameter("employeeId");
@@ -365,6 +415,10 @@ public class EmployeePortlet {
 		}		
 	}
 	
+	/**
+	 * Action of deleting an employee
+	 * @param request
+	 */
 	@ActionMapping(params = "action=deleteEmployee")
 	public void doRemove(ActionRequest request){
 		String id = request.getParameter("employeeId");
@@ -379,12 +433,22 @@ public class EmployeePortlet {
 		}
 	}
 	
+	/**
+	 * Cancel action
+	 * @param request
+	 */
 	@ActionMapping(params = "action=cancel")
 	public void doCancel(ActionRequest request){
 		errorMap = new HashMap<String, String>();
 		valuesMap = new HashMap<String, String>();
 	}
 	
+	/**
+	 * Action to change the image of an employee
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
 	@ActionMapping(params = "action=changeImage")
 	public void updateImage(ActionRequest request, ActionResponse response) 
 			throws Exception{
@@ -436,6 +500,11 @@ public class EmployeePortlet {
 		}
 	}
 	
+	/**
+	 * Return the extension name of an image
+	 * @param o
+	 * @return
+	 */
 	private static String getFormatName(Object o) {
 	    try {
 	      ImageInputStream iis = ImageIO.createImageInputStream(o);

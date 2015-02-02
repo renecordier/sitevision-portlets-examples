@@ -20,9 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
+/**
+ * Portlet class of the configuration controller
+ */
 @Controller
 @RequestMapping(value="CONFIG")
 public class EmployeeConfigController {
+	//DI of velocity engine
 	private VelocityEngine velocityEngine; 
     
     /**
@@ -39,6 +43,16 @@ public class EmployeeConfigController {
         return velocityEngine;
     }
 	
+    /**
+     * Default render view of the configuration controller
+     * @param request
+     * @param response
+     * @param model
+     * @param pref
+     * @return
+     * @throws PortletException
+     * @throws IOException
+     */
 	@RenderMapping
 	public String doConfig(RenderRequest request, RenderResponse response, Model model, PortletPreferences pref) 
 			throws PortletException, IOException{
@@ -52,6 +66,15 @@ public class EmployeeConfigController {
 		return "configView";
 	}
 	
+	/**
+	 * Action of saving configuration
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param pref
+	 * @throws PortletException
+	 * @throws IOException
+	 */
 	@ActionMapping
 	public void saveConfig(ActionRequest request, ActionResponse response, PortletSession session, PortletPreferences pref)
 			throws PortletException, IOException{
