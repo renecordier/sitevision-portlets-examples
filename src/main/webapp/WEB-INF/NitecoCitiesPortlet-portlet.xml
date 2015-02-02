@@ -9,7 +9,8 @@
     	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
     	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<bean class="se.niteco.controller.CityPortlet">
+	<!--  City portlet beans -->
+	<bean id="cityPortlet" class="se.niteco.controller.CityPortlet">
 	  	<property name="velocityEngine" ref="velocityEngine" />
 	</bean>
 </beans>

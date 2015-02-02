@@ -11,6 +11,7 @@ public class Employee {
 	private String role;
 	private int salary;
 	private City city;
+	private String picture;
 	
 	public Employee (int id, String name, String email, String team, String role, int salary, City city) {
 		this.id = id;
@@ -20,6 +21,7 @@ public class Employee {
 		this.role = role;
 		this.salary = salary;
 		this.city = city;
+		this.setPicture(null);
 	}
 	
 	public City getCity() {
@@ -75,5 +77,13 @@ public class Employee {
 	
 	public void setSalary(int salary) {
 		this.salary = salary;
+	}
+
+	public String getPicture() {
+		return picture;
+	}
+
+	public void setPicture(String picture) {
+		this.picture = picture;
 	}
 }

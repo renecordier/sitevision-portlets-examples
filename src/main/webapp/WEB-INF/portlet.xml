@@ -18,12 +18,12 @@
             <portlet-mode>VIEW</portlet-mode>
             <portlet-mode>CONFIG</portlet-mode>
         </supports>
-        
+        <!--
         <init-param>
 			<name>contextConfigLocation</name>
             <value>/WEB-INF/NitecoEmployeePortlet-portlet.xml</value>
 		</init-param>
-		
+		-->
         <portlet-info>
             <title>Niteco Employees</title>
             <keywords>interactive</keywords>
@@ -47,12 +47,12 @@
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
         </supports>
-        
+         <!--
 		<init-param>
 			<name>contextConfigLocation</name>
             <value>/WEB-INF/NitecoCitiesPortlet-portlet.xml</value>
 		</init-param>		
-        
+        -->
         <portlet-info>
             <title>Niteco Cities</title>
             <keywords>interactive</keywords>

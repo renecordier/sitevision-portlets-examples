@@ -97,6 +97,11 @@
 		</dependency>
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>3.0.3.RELEASE</version>
             <type>jar</type>
@@ -109,9 +114,14 @@
 	      <scope>provided</scope>
 	   </dependency>
 	   <dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-broker</artifactId>
-			<version>5.10.1</version>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.activemq</groupId>
+		    <artifactId>activemq-all</artifactId>
+		    <version>5.10.0</version>
 		</dependency>
 	   <dependency>
 	      <groupId>com.google.code.gson</groupId>
@@ -119,6 +129,22 @@
 	      <version>2.3.1</version>
 	      <scope>compile</scope>
 	    </dependency>
+	    <dependency>
+		  <groupId>org.apache.xbean</groupId>
+		  <artifactId>xbean-spring</artifactId>
+		  <version>3.7</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
   </dependencies>
   
    <repositories>
@@ -130,10 +156,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>sitevisionrepo</id>
-            <url>http://maven.sitevision.se/artifactory/repo</url>
-        </repository>
+       
     </repositories>
 
     <pluginRepositories>
@@ -146,4 +169,5 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+    
 </project>

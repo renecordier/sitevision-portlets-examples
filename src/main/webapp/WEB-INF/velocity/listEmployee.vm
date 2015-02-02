@@ -1,19 +1,22 @@
-<div class="employees">
+#parse("head.vm")
+
+<div class="portlet employees">
 <h3>This is Niteco employees list using Portlet API, Spring and Velocity and API</h3>
 
 <form action="$showAddUrl" method="post">
 	#if ($employees)
-	<table>
+	<table class="table-portlet">
 		<tr>
-			<td>Id</td>
-			<td>Name</td>
-			<td>Email</td>
-			<td>Team</td>
-			<td>Role</td>
-			<td>Salary</td>
-			<td>City</td>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Team</th>
+			<th>Role</th>
+			<th>Salary</th>
+			<th>City</th>
+			<th>Avatar</th>
 			#if ($mode.equals("Edit"))
-			<td>Actions</td>
+			<th>Actions</th>
 			#end
 		</tr>
 		#foreach ($employee in $employees)
@@ -25,12 +28,21 @@
 			<td>$employee.role</td>
 			<td>$employee.salary</td>
 			<td>$!employee.city.cityName</td>
+			<td>
+				#set( $editPic = $editPicUrl + "&employeeId=" + $employee.id )
+				<a href="$editPic" class="no-decoration" >
+            	#if ($employee.picture)
+                	$employee.picture
+                #else
+                	<img alt="$employee.id" src="${cPath}/img/no-avatar.jpg" />
+                #end
+            </td>
 			#if ($mode.equals("Edit"))
 			<td>
 				#set( $editEmployee = $editUrl + "&employeeId=" + $employee.id )
                 #set( $removeEmployee = $removeUrl + "&employeeId=" + $employee.id) 
-                <a href="$editEmployee" >Edit</a>
-                <a href="$removeEmployee" onclick="return confirm('Are you sure to delete this employee ?')" >Delete</a>
+                <a href="$editEmployee" class="button">Edit</a>
+                <a href="$removeEmployee" class="button" onclick="return confirm('Are you sure to delete this employee ?')" >Delete</a>
 			</td>
 			#end
 		</tr>

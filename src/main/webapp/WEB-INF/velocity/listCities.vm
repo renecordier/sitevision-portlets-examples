@@ -1,4 +1,6 @@
-<div class="cities">
+#parse("head.vm")
+
+<div class="portlet cities">
 <h3>Niteco cities</h3>
 
 #if ($mode.equals("add"))
@@ -9,17 +11,17 @@
 <form action="$showAddUrl" method="post">
 #end
 	#if ($cities)
-	<table>
+	<table class="table-portlet">
 		<tr>
-			<td>Id</td>
-			<td>City name</td>			
-			<td>Actions</td>
+			<th>Id</th>
+			<th>City name</th>			
+			<th>Actions</th>
 		</tr>
 		#foreach ($city in $cities)
 		<tr>
 			#if ($mode.equals("edit") && $idEdit == $city.cityId)
-			<td><input name="idUpdate" value="$city.cityId" readonly /></td>
-			<td><input name="nameUpdate" value="$city.cityName" /></td>
+			<td><input name="idUpdate" value="$city.cityId" readonly class="id-city-input" /></td>
+			<td><input name="nameUpdate" value="$city.cityName" class="name-city-input" /></td>
 			<td>
 				<input type="submit" value="Update" />
 				<a href="$cancelUrl" >Cancel</a>
@@ -31,8 +33,8 @@
 				#if ($mode.equals("view"))
 				#set( $editCity = $editUrl + "&cityId=" + $city.cityId )
                 #set( $removeCity = $removeUrl + "&cityId=" + $city.cityId) 
-                <a href="$editCity" >Edit</a>
-                <a href="$removeCity" onclick="return confirm('Are you sure to delete this city ?')" >Delete</a>
+                <a href="$editCity" class="button">Edit</a>
+                <a href="$removeCity" class="button" onclick="return confirm('Are you sure to delete this city ?')" >Delete</a>
                 #end
 			</td>
 			#end
@@ -40,11 +42,11 @@
 		#end
 		#if ($mode.equals("add"))
 		<tr>
-			<td><input name="addId" value="$idNew" readonly /></td>
-			<td><input name="addName" /></td>
+			<td><input name="addId" value="$idNew" readonly class="id-city-input" /></td>
+			<td><input name="addName" class="name-city-input" /></td>
 			<td>
 				<input type="submit" value="Add" />
-				<a href="$cancelUrl" >Cancel</a>
+				<a href="$cancelUrl" class="button" >Cancel</a>
 			</td>
 		</tr>	
 		#end

@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:jms="http://www.springframework.org/schema/jms"
 	xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:c="http://www.springframework.org/schema/c"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -12,74 +16,42 @@
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd
-        http://www.springframework.org/schema/jms 
+        http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/jms
         http://www.springframework.org/schema/jms/spring-jms.xsd
-        http://activemq.apache.org/schema/core 
+        http://activemq.apache.org/schema/core
         http://activemq.apache.org/schema/core/activemq-core.xsd
-        ">
-    
-    <!-- enables annotation based configuration -->
-	 <context:annotation-config />
-	<!-- scans for annotated classes in the com.company package -->
+    ">
 	<context:component-scan base-package="se.niteco" /> 
-	
-	<!-- For JMS Transaction -->
- <!--
-    <bean id="transactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
-        <property name="connectionFactory" ref="connectionFactory" />
-    </bean>-->
- 
-    <!-- JMS Destination -->
- <!--
-    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg value="FOO.QUEUE" />
-    </bean>-->
- 
-    <!-- JmsTemplate -->
- <!--
-    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="defaultDestination" ref="destination" />
-    </bean>-->
+	<mvc:annotation-driven />
+    <tx:annotation-driven />
+    <!--  ActiveMQ topic declaration -->
+    <amq:topic id="destination" physicalName="topic" />
+
+	 <!--  ActiveMQ connection factory -->
+	<amq:connectionFactory id="connectionFactory" 
+      brokerURL="tcp://localhost:61616" />
+      
+       <!-- JMS template declaration -->
+    <bean id="jmsTemplate" 
+      class="org.springframework.jms.core.JmsTemplate"
+      c:_-ref="connectionFactory" 
+      p:defaultDestinationName="topic" />
+      
+     <!-- Producer declaration -->  
+    <bean id="citySender" class="se.niteco.jms.CitySenderImpl"
+      c:_-ref="jmsTemplate" />
     
-    <!-- this is the Message Driven POJO (MDP) -->
-<!--	<bean id="messageListener" class="se.niteco.communication.CityListReceiverImpl" />-->
- 
-    <!-- Connection Factory -->
- <!--
-    <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-            <property name="brokerURL" value="vm://localhost?brokerConfig=xbean:activemq.xml" />
-    </bean>
-    <bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="destination" ref="destination" />
-        <property name="messageListener" ref="messageListener"/>
-    </bean>-->
-    
-    <bean id="connectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-		<property name="brokerURL" value="tcp://localhost:61616"/>
-	</bean>
-    
-    <bean id="queue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="cities.queue"/>
-	</bean>
-    
-    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="defaultDestination" ref="queue" />
-    </bean>
-    
-     <bean id="transactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
-        <property name="connectionFactory" ref="connectionFactory" />
-    </bean>
-    
-    <bean id="messageListener" class="se.niteco.communication.CityListReceiverImpl" />
-    
-    <bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="destination" ref="queue" />
-        <property name="messageListener" ref="messageListener"/>
-    </bean>
+     <!-- Listener consumer jms -->
+    <jms:listener-container container-type="default" connection-factory="connectionFactory"
+    	acknowledge="auto" concurrency="10-50">
+  		<jms:listener destination="topic" 
+                ref="employeePortlet" 
+                method="handleCitiesAlert" />
+	</jms:listener-container>
 
     <!-- VelocityConfig -->
     <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">

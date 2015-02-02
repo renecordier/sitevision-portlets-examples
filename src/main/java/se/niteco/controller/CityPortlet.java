@@ -9,7 +9,6 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletSession;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -26,7 +25,12 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+<<<<<<< HEAD
 import se.niteco.communication.CityListSender;
+=======
+import se.niteco.jms.CitySender;
+import se.niteco.jms.CitySenderImpl;
+>>>>>>> spring
 import se.niteco.model.City;
 import se.niteco.service.CityService;
 import se.niteco.service.CityServiceImpl;
@@ -35,14 +39,21 @@ import senselogic.sitevision.api.context.PortletContextUtil;
 import senselogic.sitevision.api.metadata.MetadataUtil;
 import senselogic.sitevision.api.property.PropertyUtil;
 
+/**
+ * Public class of the city portlet
+ */
 @Controller
 @RequestMapping(value="VIEW")
 public class CityPortlet {
 	@Autowired
 	@Qualifier("cityService")
-	private CityService cityServ;
+	private CityService cityServ; //DI of city service
 	
-	protected final static String META_CITIES_LIST = "cityList";
+	@Autowired
+	@Qualifier("citySender")
+	private static CitySender citySender; //DI of city sender
+	
+	protected final static String META_CITIES_LIST = "cityList"; //metadata name
 	
 	protected final Gson gson = new Gson();
     
@@ -50,10 +61,14 @@ public class CityPortlet {
     
     private boolean init = true;
     
+<<<<<<< HEAD
     private VelocityEngine velocityEngine;
     
     @Autowired
     private CityListSender cityListSender;
+=======
+    private VelocityEngine velocityEngine; // DI of velocity engine
+>>>>>>> spring
     
     /**
      * @param velocityEngine the velocityEngine to set
@@ -69,6 +84,10 @@ public class CityPortlet {
         return velocityEngine;
     }
     
+    /**
+     * Load the list of cities from sitevision's metadatas
+     * @param request
+     */
     protected void loadCityList(PortletRequest request) { 
 		String cityJSON = null;
 		cityServ = new CityServiceImpl();
@@ -78,7 +97,7 @@ public class CityPortlet {
         PropertyUtil propertyUtil = utils.getPropertyUtil();
         
         Node currentPage = pcUtil.getCurrentPage();
-       
+        
         cityJSON = propertyUtil.getString(currentPage, META_CITIES_LIST);
         System.out.println(cityJSON);
         
@@ -91,6 +110,11 @@ public class CityPortlet {
         } 
 	}
 	
+    /**
+     * Save the list of cities in sitevision's metadatas
+     * @param request
+     * @throws Exception
+     */
 	protected void saveCityList(PortletRequest request) throws Exception {
         Utils utils = (Utils)request.getAttribute("sitevision.utils");
         PortletContextUtil pcUtil = utils.getPortletContextUtil();
@@ -100,16 +124,24 @@ public class CityPortlet {
         metaUtil.setMetadataPropertyValue(currentPage, META_CITIES_LIST, gson.toJson(cityServ.getCities()));
     }
 	
+	/**
+	 * Default view mode of city portlet, showing the list of cities
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @param pref
+	 * @return
+	 */
 	@RenderMapping
-	public String showEmployee(Model model, RenderRequest request, RenderResponse response, PortletPreferences pref){
+	public String showCity(Model model, RenderRequest request, RenderResponse response, PortletPreferences pref){
 		//Set add url
 		PortletURL showAddUrl = response.createRenderURL();
-		showAddUrl.setParameter("action", "showAdd");
+		showAddUrl.setParameter("action", "showAddCity");
 		model.addAttribute("showAddUrl", showAddUrl);
 
 		//Set edit url
 		PortletURL editUrl = response.createRenderURL();
-		editUrl.setParameter("action", "showEdit");
+		editUrl.setParameter("action", "showEditCity");
 		model.addAttribute("editUrl", editUrl);
 
 		//Set remove url
@@ -119,20 +151,33 @@ public class CityPortlet {
 
 		//Get list of employee
 		if (init) {
+			System.out.println("init");
 			loadCityList(request); 
+<<<<<<< HEAD
 			//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 			cityListSender.sendCityList(gson.toJson(cityServ.getCities()));
+=======
+			citySender = new CitySenderImpl();
+			citySender.sendCities(cityServ.getCities());
+>>>>>>> spring
 			init = false;
 		}
       	List<City> lst = cityServ.getCities();
       	model.addAttribute("cities", lst);
-      	
+      	model.addAttribute("request", request);
       	model.addAttribute("mode", "view");
       	
 		return "listCities";
 	}
 	
-	@RenderMapping(params = "action=showAdd")
+	/**
+	 * View to add a city in the list
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RenderMapping(params = "action=showAddCity")
 	public String showAdd(Model model, RenderRequest request, RenderResponse response){
 		//Set insert url
 		PortletURL insertCityUrl = response.createActionURL();
@@ -152,10 +197,16 @@ public class CityPortlet {
       	
       	int idNew = cityServ.getNewCityId();
       	model.addAttribute("idNew", idNew);
+      	model.addAttribute("request", request);
       	
 		return "listCities";
 	}
 	
+	/**
+	 * Action to insert a city in the list
+	 * @param request
+	 * @param response
+	 */
 	@ActionMapping(params = "action=insertCity")
 	public void doAdd(ActionRequest request, ActionResponse response){
 		String id = request.getParameter("addId");
@@ -169,11 +220,22 @@ public class CityPortlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+<<<<<<< HEAD
 		//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 		cityListSender.sendCityList(gson.toJson(cityServ.getCities()));
+=======
+		citySender.sendCities(cityServ.getCities());
+>>>>>>> spring
 	}
 	
-	@RenderMapping(params = "action=showEdit")
+	/**
+	 * View to edit a city in the list
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RenderMapping(params = "action=showEditCity")
 	public String showEdit(Model model, RenderRequest request, RenderResponse response){
 
 		//Set url to model
@@ -194,12 +256,17 @@ public class CityPortlet {
 		//Get selected city
 		String cityId = request.getParameter("cityId");
 		model.addAttribute("idEdit", Integer.parseInt(cityId));
-		
+		model.addAttribute("request", request);
 		model.addAttribute("mode", "edit");
 
 		return "listCities";
 	}
 	
+	/**
+	 * Action to update a city from the list
+	 * @param request
+	 * @param response
+	 */
 	@ActionMapping(params = "action=updateCity")
 	public void doEdit(ActionRequest request, ActionResponse response){
 		String id = request.getParameter("idUpdate");
@@ -213,10 +280,19 @@ public class CityPortlet {
 			e.printStackTrace();
 		}
 		
+<<<<<<< HEAD
 		//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 		cityListSender.sendCityList(gson.toJson(cityServ.getCities()));
+=======
+		citySender.sendCities(cityServ.getCities());
+>>>>>>> spring
 	}
 	
+	/**
+	 * Action to delete a city from the list
+	 * @param request
+	 * @param response
+	 */
 	@ActionMapping(params = "action=deleteCity")
 	public void doRemove(ActionRequest request, ActionResponse response){
 		String cityId = request.getParameter("cityId");
@@ -229,11 +305,19 @@ public class CityPortlet {
 				e.printStackTrace();
 			}
 			
+<<<<<<< HEAD
 			//request.getPortletSession().setAttribute("cities", cityServ.getCities(), PortletSession.APPLICATION_SCOPE);
 			cityListSender.sendCityList(gson.toJson(cityServ.getCities()));
+=======
+			citySender.sendCities(cityServ.getCities());
+>>>>>>> spring
 		}
 	}
 	
+	/**
+	 * Cancel action
+	 * @param request
+	 */
 	@ActionMapping(params = "action=cancel")
 	public void doCancel(ActionRequest request){
 		

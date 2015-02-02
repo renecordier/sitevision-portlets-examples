@@ -1,0 +1,110 @@
+.portlet {
+    border:groove 2px #000000;
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright:10px;
+    -moz-border-radius-bottomleft:10px;
+    -moz-border-radius-bottomright:10px;
+    -webkit-border-top-left-radius:10px;
+    -webkit-border-top-right-radius:10px;
+    -webkit-border-bottom-left-radius:10px;
+    -webkit-border-bottom-right-radius:10px;
+    border-top-left-radius:10px;
+    border-top-right-radius:10px;
+    border-bottom-left-radius:10px;
+    border-bottom-right-radius:10px;
+    padding: 10px;
+    padding-top: 0px;
+    margin: 10px;
+    text-align: center;
+}
+
+.employees {
+	width: 700px;
+}
+
+.cities {
+	width: 420px;
+}
+
+h3 {
+	color: blue;
+	text-align: center;
+	font-weight: bold;
+}
+
+table {
+	margin: auto;
+	margin-bottom: 10px;
+}
+
+.table-portlet table, .table-portlet th, .table-portlet td{
+   border: 1px solid black;
+} 
+
+.table-portlet th {
+	background-color: #77b368;
+	color: black;
+}
+
+.table-portlet td {
+	padding: 5px;
+	background-color: #fadb8e;
+}
+
+.no-decoration {
+	text-decoration: none;
+}
+
+.no-decoration img {
+	width: 50px;
+	height: 50px;
+}
+
+.button:link, .button:visited {
+  text-decoration: none;
+  background-color: #EEEEEE;
+  color: #333333;
+  padding: 2px 6px 2px 6px;
+  border-top: 1px solid #CCCCCC;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #CCCCCC;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright:5px;
+  -moz-border-radius-bottomleft:5px;
+  -moz-border-radius-bottomright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px;
+  -webkit-border-bottom-left-radius:5px;
+  -webkit-border-bottom-right-radius:5px;
+  border-top-left-radius:5px;
+  border-top-right-radius:5px;
+  border-bottom-left-radius:5px;
+  border-bottom-right-radius:5px;
+}
+
+.button:hover, .button:active {
+    background-color: #EEEFFF;
+}
+
+.id-city-input {
+	width: 15px;
+}
+
+.name-city-input {
+	width: 150px;
+}
+
+.tempPic, .currentPic img {
+	width: 80px;
+	height: 80px;
+}
+
+.tempPic {
+	display: none;
+}
+
+.changePicCaption {
+	font-size: 10.5pt;
+	font-weight: bold;
+}

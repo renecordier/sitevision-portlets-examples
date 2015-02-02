@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.portlet.PortletContext;
+import se.niteco.service.EmployeeService;
 
 import org.springframework.stereotype.Service;
 
@@ -15,25 +15,37 @@ import se.niteco.model.Employee;
  */
 @Service(value="employeeService")
 public class EmployeeServiceImpl implements EmployeeService {
-	
+	//List of employees
 	private List<Employee> employeeList = Collections.synchronizedList(new ArrayList<Employee>());
 	
+	/**
+	 * Constructor
+	 */
 	public EmployeeServiceImpl() {
-		/*employeeList.add(new Employee(1, "Khoi", "khoi@niteco.se", "RxEye", "Team leader", 1000));
-		employeeList.add(new Employee(2, "Rene", "rene@niteco.se", "SiteVision", "Java dev", 500));
-		employeeList.add(new Employee(3, "Xon", "xon@niteco.se", "SiteVision", "Java dev", 500));
-		employeeList.add(new Employee(4, "Calvin", "calvin@niteco.se", "PMs", "PMO", 3000));*/
+		
 	}
 
-	
+	/**
+	 * Get the list of employees
+	 * @return employeeList
+	 */
 	public List<Employee> getEmployees() {
 		return this.employeeList;
 	}
 
+	/**
+	 * Add an employee in the list
+	 * @param employee
+	 */
 	public void addEmployee(Employee employee) {
 		this.employeeList.add(employee);
 	}
 
+	/**
+	 * Search if the id is unique or not
+	 * @param id
+	 * @return isUnique
+	 */
 	public boolean isIdUnique(int id) {
 		boolean isUnique = true;
 		for(Employee employee : this.employeeList) {
@@ -45,6 +57,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return isUnique;
 	}
 
+	/**
+	 * Return an employee giving his id
+	 * @param id
+	 * @return matchingEmployee
+	 */
 	public Employee getEmployee(int id) {
 		Employee matchingEmployee = null;
 		for(Employee employee : employeeList) {
@@ -56,20 +73,36 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return matchingEmployee;
 	}
 
+	/**
+	 * Remove an employee with its given id 
+	 */
 	public void removeEmployee(int id) {
 		employeeList.remove(getEmployee(id));
 	}
 
+	/**
+	 * Search employees
+	 * Not implemented yet...
+	 */
 	public List<Employee> searchEmployees(String name) {
 		//todo
 		return null;
 	}
 
+	/**
+	 * Update a given employee
+	 * @param employee
+	 */
 	public void updateEmployee(Employee employee) {
 		int index = getEmployeeIndex(employee.getId());
 		employeeList.set(index, employee);
 	}
 
+	/**
+	 * Get the index of an employee in the list
+	 * @param id
+	 * @return index
+	 */
 	public int getEmployeeIndex(int id) {
 		int index;
 		for (index = 0; index < employeeList.size(); index++) {
@@ -79,6 +112,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return index;
 	}
 
+	/**
+	 * Set a list of employees
+	 * @param employees
+	 */
 	public void setEmployees(List<Employee> employees) {
 		this.employeeList = employees;
 	}
